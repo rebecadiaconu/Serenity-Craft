@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Serenity_Craft_Library.Models
+namespace Serenity_Craft.Models
 {
     public class Publisher
     {
@@ -15,6 +15,7 @@ namespace Serenity_Craft_Library.Models
         // -- navigation properties --
 
         // one-to-one relationship
+        [Required]
         public virtual Contact Contact { get; set; }
 
         // one-to-many

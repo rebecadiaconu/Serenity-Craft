@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Serenity_Craft_Library.Models;
 
 namespace Serenity_Craft.Models
 {
@@ -26,14 +25,11 @@ namespace Serenity_Craft.Models
         {
         }
 
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<Book> Books { get; set; }
 
         public DbSet<BookType> BookTypes { get; set; }
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<Genre> Genres { get; set; }
-        public DbSet<InfoDelivery> InfoDeliveries { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Review> Reviews { get; set; }
 

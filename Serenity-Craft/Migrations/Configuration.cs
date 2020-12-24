@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using Serenity_Craft.Models;
-using Serenity_Craft_Library.Models;
 
 namespace Serenity_Craft.Migrations
 {

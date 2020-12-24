@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Serenity_Craft_Library.Models
+namespace Serenity_Craft.Models
 {
     public class Genre
     {

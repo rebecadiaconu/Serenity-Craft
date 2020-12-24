@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Book Types";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@foreach (var bt in ViewBag.BookTypes)
+{
+    <ul class="panel-body">
+        <li>@bt.Name</li>
+
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "BookType", method: FormMethod.Get, routeValues:
+        new { id = bt.BookTypeId }))
+        {
+            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "BookType", method: FormMethod.Post, routeValues:
+            new { id = bt.BookTypeId }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
+        }
+        <br />
+    </ul>
+}
+
+@using (Html.BeginForm(actionName: "New", controllerName: "BookType", method: FormMethod.Get))
+{
+    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
+}
+
+

@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Publishers";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@foreach (var pub in ViewBag.publishers)
+{
+    <ul class="panel-body">
+        <li>@pub.Name</li>
+
+        @using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
+            routeValues: new { id = pub.PublisherId }))
+        {
+            <button class="btn btn-primary">Details</button>
+        }
+    </ul>
+}
+
+@using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get))
+{
+    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
+}
+

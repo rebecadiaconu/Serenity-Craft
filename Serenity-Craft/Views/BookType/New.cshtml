@@ -1,0 +1,25 @@
+﻿@model Serenity_Craft.Models.BookType
+@{
+    ViewBag.Title = "Add new book type";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@using (Html.BeginForm("New", "BookType", FormMethod.Post))
+{
+    @Html.Label("Name", "Book type name:")
+    <br />
+    @Html.TextBoxFor(b => b.Name, null, new { placeholder = "Type in the book type's name", @class = "form-control" })
+    @Html.ValidationMessageFor(b => b.Name, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+    <button class="btn btn-primary" type="submit">Add</button>
+}
+
+

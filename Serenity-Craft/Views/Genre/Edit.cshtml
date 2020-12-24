@@ -1,0 +1,28 @@
+﻿@model Serenity_Craft.Models.Genre
+@{
+    ViewBag.Title = "Update";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@using (Html.BeginForm("Edit", "Genre"))
+{
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+
+    @Html.HiddenFor(b => b.GenreId)
+    <br />
+
+    @Html.Label("Name", "Genre name:")
+    <br />
+    @Html.EditorFor(b => b.Name, new { placeholder = "Type in the genre's name", @class = "form-control" })
+    @Html.ValidationMessageFor(b => b.Name, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+    <button class="btn btn-primary" type="submit">Update</button>
+}

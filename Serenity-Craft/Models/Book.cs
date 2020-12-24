@@ -1,11 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
 using Serenity_Craft.Models;
 
-namespace Serenity_Craft_Library.Models
+namespace Serenity_Craft.Models
 {
     public class Book
     {
+        public Book()
+        {
+            this.BookRating = 0;
+        }
+
+
         [Key]
         public int BookId { get; set; }
 
@@ -33,14 +41,23 @@ namespace Serenity_Craft_Library.Models
          RegularExpression("[0-9]+")]
         public double Price { get; set; }
 
+
         public double BookRating { get; set; }
 
         [RegularExpression("[0-9]+")]
         public int InStock { get; set; }
 
+        [NotMapped]
+        public IEnumerable<SelectListItem> PublishersList { get; set; }
+        [NotMapped]
+        public IEnumerable<SelectListItem> BookTypesList { get; set; }
+
         // --------------------------
 
+        [Required]
         public int PublisherId { get; set; }
+
+        [Required]
         public int BookTypeId { get; set; }
 
 
@@ -48,7 +65,6 @@ namespace Serenity_Craft_Library.Models
 
         // one-to-many relationship
         public virtual ICollection<Review> Reviews { get; set; }
-        public virtual ICollection<InfoDelivery> InfoDeliveries { get; set; }
 
         // many-to-one relationship
         public virtual Publisher Publisher { get; set; }
@@ -56,5 +72,6 @@ namespace Serenity_Craft_Library.Models
 
         // many-to-many relationship
         public virtual ICollection<Genre> Genres { get; set; }
+
     }
 }

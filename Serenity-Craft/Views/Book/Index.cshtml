@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Books";
+}
+
+<h2>
+    @ViewBag.Title
+</h2>
+
+@foreach (var book in ViewBag.Books)
+{
+    <div class="panel-body">
+        @Html.Label("Title", "Title:")
+        <br />
+        <p>@book.Title</p>
+
+        @Html.Label("Author", "Author:")
+        <br />
+        <p>@book.Author</p>
+
+        @Html.Label("Rating", "Rating:")
+        <br />
+
+        @{
+            var rating = (int)book.BookRating;
+            switch (rating)
+            {
+                case 0:
+                    <text>
+                        <p>☆☆☆☆☆</p>
+                    </text>
+                    break;
+                case 1:
+                    <text>
+                        <p>⭐☆☆☆☆</p>
+                    </text>
+                    break;
+                case 2:
+                    <text>
+                        <p>⭐⭐☆☆☆</p>
+                    </text>
+                    break;
+                case 3:
+                    <text>
+                        <p>⭐⭐⭐☆☆</p>
+                    </text>
+                    break;
+                case 4:
+                    <text>
+                        <p>⭐⭐⭐⭐☆</p>
+                    </text>
+                    break;
+                case 5:
+                    <text>
+                        <p>⭐⭐⭐⭐⭐</p>
+                    </text>
+                    break;
+            }
+        }
+
+        @if (book.InStock > 0)
+        {
+            @Html.Label("Price", "Price:")
+            <br />
+
+            <p>@book.Price RON</p>
+        }
+        else
+        {
+            <p class="text-danger">Stoc epuizat!</p>
+        }
+
+        @using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
+            routeValues: new { id = book.BookId }))
+        {
+            <button class="btn btn-primary">Details</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "Book", method: FormMethod.Get, routeValues:
+            new { id = book.BookId }))
+        {
+            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "Book", method: FormMethod.Post, routeValues:
+            new { id = book.BookId }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
+        }
+        <br />
+
+
+    </div>
+}
+
+@using (Html.BeginForm(actionName: "New", controllerName: "Book", method: FormMethod.Get))
+{
+    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
+}
+

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Serenity_Craft_Library.Models
+namespace Serenity_Craft.Models
 {
     public class Review
     {
         [Key]
         public int ReviewId { get; set; }
+
         [MaxLength(300, ErrorMessage = "Your opinion matters to us, but try to make it shorter!")]
         public string Text { get; set; }
 

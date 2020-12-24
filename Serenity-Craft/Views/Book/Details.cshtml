@@ -1,0 +1,86 @@
+﻿@model Serenity_Craft.Models.Book
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Label("Title", "Title:")
+<br />
+<p>@Model.Title</p>
+
+@Html.Label("Author", "Author:")
+<br />
+<p>@Model.Author</p>
+
+@Html.Label("Number of pages", "Number of pages:")
+<br />
+<p>@Model.Pages</p>
+
+@Html.Label("Stock", "Stock:")
+<br />
+<p>@Model.InStock</p>
+
+@Html.Label("Price", "Price:")
+<br />
+<p>@Model.Price</p>
+
+@if (Model.Publisher != null)
+{
+    @Html.Label("Publisher", "Publisher:")
+    <br />
+    <p>@Model.Publisher.Name</p>
+
+    using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
+        routeValues: new { id = Model.Publisher.PublisherId }))
+    {
+        <button class="btn btn-primary">Details</button>
+    }
+}
+
+@if (Model.BookType != null)
+{
+    @Html.Label("Book Type", "Book Type:")
+    <br />
+    <p>@Model.BookType.Name</p>
+}
+
+<div class="panel-body">
+    @if (Model.Summary.IsEmpty())
+    {
+        <p>This book has no summary...</p>
+    }
+    else
+    {
+        @Html.Label("Summary", "Summary:")
+        <br />
+        @Html.DisplayFor(b => b.Summary)
+    }
+</div>
+@if (Model.Genres.Count > 0)
+{
+    @Html.Label("Genres", "Genres:")
+    <br />
+    <ul>
+        @foreach (var genre in Model.Genres)
+        {
+            <li>@genre.Name</li>
+        }
+    </ul>
+}
+
+@using (Html.BeginForm(actionName: "Edit", controllerName: "Book", method: FormMethod.Get, routeValues:
+    new { id = Model.BookId }))
+{
+    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
+}
+
+@using (Html.BeginForm(actionName: "Delete", controllerName: "Book", method: FormMethod.Post, routeValues:
+    new { id = Model.BookId }))
+{
+    @Html.HttpMethodOverride(HttpVerbs.Delete)
+    <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
+}
+
+

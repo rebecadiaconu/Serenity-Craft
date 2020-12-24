@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Serenity_Craft_Library.Models
+namespace Serenity_Craft.Models
 {
     public class Contact
     {
@@ -10,7 +10,7 @@ namespace Serenity_Craft_Library.Models
         [ForeignKey("Publisher")]
         public int PublisherId { get; set; }
 
-        [Phone]
+        [RegularExpression(@"^0(\d{9})$", ErrorMessage = "This is not a valid phone number!")]
         public string PhoneNumber { get; set; }
 
         [EmailAddress]

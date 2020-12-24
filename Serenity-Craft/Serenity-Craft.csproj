@@ -168,8 +168,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\BookTypeController.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
+    <Compile Include="Controllers\GenreController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PublisherController.cs" />
+    <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -177,16 +183,18 @@
     <Compile Include="Migrations\202012231302153_InitalCreate.Designer.cs">
       <DependentUpon>202012231302153_InitalCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012240854220_DropDelivery.cs" />
+    <Compile Include="Migrations\202012240854220_DropDelivery.Designer.cs">
+      <DependentUpon>202012240854220_DropDelivery.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BookType.cs" />
     <Compile Include="Models\Contact.cs" />
-    <Compile Include="Models\Delivery.cs" />
     <Compile Include="Models\Genre.cs" />
+    <Compile Include="Models\GenreBooks.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\InfoDelivery.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\Review.cs" />
@@ -249,9 +257,29 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Book\Index.cshtml" />
+    <Content Include="Views\Book\Details.cshtml" />
+    <Content Include="Views\Publisher\Index.cshtml" />
+    <Content Include="Views\Book\New.cshtml" />
+    <Content Include="Views\Book\Edit.cshtml" />
+    <Content Include="Views\Book\Delete.cshtml" />
+    <Content Include="Views\BookType\Index.cshtml" />
+    <Content Include="Views\BookType\New.cshtml" />
+    <Content Include="Views\BookType\Edit.cshtml" />
+    <Content Include="Views\BookType\Delete.cshtml" />
+    <Content Include="Views\Genre\Index.cshtml" />
+    <Content Include="Views\Genre\New.cshtml" />
+    <Content Include="Views\Genre\Edit.cshtml" />
+    <Content Include="Views\Genre\Delete.cshtml" />
+    <Content Include="Views\Publisher\Details.cshtml" />
+    <Content Include="Views\Publisher\New.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Address\" />
+    <Folder Include="Views\Contact\" />
+    <Folder Include="Views\Delivery\" />
+    <Folder Include="Views\Review\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -269,6 +297,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202012231302153_InitalCreate.resx">
       <DependentUpon>202012231302153_InitalCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012240854220_DropDelivery.resx">
+      <DependentUpon>202012240854220_DropDelivery.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
