@@ -7,7 +7,24 @@
 
 @if (ViewBag.Message != null)
 {
-    <div class="alert alert-danger ">@ViewBag.Message</div>
+    <div class="alert alert-danger ">
+        <p>Avem @ViewBag.Message carti ce corespund acestui tip de carte.</p>
+        <p>Stergea acestuia implica si stergea tuturor cartilor asociate lui.</p>
+        <h3>Sunteti sigur de modificare?</h3>
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "BookType", method: FormMethod.Post, routeValues:
+            new { id = ViewBag.TypeId, delete = 1 }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Index", controllerName: "BookType", method: FormMethod.Get, routeValues:
+            new { id = (dynamic)null}))
+        {
+            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
+        }
+    </div>
 }
 
 @foreach (var bt in ViewBag.BookTypes)

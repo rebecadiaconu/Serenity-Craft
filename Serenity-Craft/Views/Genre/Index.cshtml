@@ -4,9 +4,27 @@
 
 <h2>@ViewBag.Title</h2>
 
+
 @if (ViewBag.Message != null)
 {
-    <div class="alert alert-danger ">@ViewBag.Message</div>
+    <div class="alert alert-danger ">
+        <p>Avem @ViewBag.Message carti ce corespund DOAR acestui gen.</p>
+        <p>Stergea acestuia implica si stergea tuturor acestor carti.</p>
+        <h3>Sunteti sigur de modificare?</h3>
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "Genre", method: FormMethod.Post, routeValues:
+            new { id = ViewBag.GenreId, delete = 1 }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Index", controllerName: "Genre", method: FormMethod.Get, routeValues:
+            new { id = (dynamic)null }))
+        {
+            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
+        }
+    </div>
 }
 
 @foreach (var genre in ViewBag.Genres)

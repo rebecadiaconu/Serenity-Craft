@@ -9,7 +9,7 @@ namespace Serenity_Craft.Models
         public int GenreId { get; set; }
 
         [Required,
-         MaxLength(20, ErrorMessage = "Genre name too long.")]
+         MaxLength(30, ErrorMessage = "Genre name too long.")]
         public string Name { get; set; }
 
         // -- navigation properties --

@@ -187,16 +187,21 @@
     <Compile Include="Migrations\202012240854220_DropDelivery.Designer.cs">
       <DependentUpon>202012240854220_DropDelivery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012262145136_UpdateContactPublisher.cs" />
+    <Compile Include="Migrations\202012262145136_UpdateContactPublisher.Designer.cs">
+      <DependentUpon>202012262145136_UpdateContactPublisher.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BookType.cs" />
+    <Compile Include="Models\CheckBoxModel.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Genre.cs" />
-    <Compile Include="Models\GenreBooks.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Publisher.cs" />
+    <Compile Include="Models\PublisherContactInfo.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -273,13 +278,21 @@
     <Content Include="Views\Genre\Delete.cshtml" />
     <Content Include="Views\Publisher\Details.cshtml" />
     <Content Include="Views\Publisher\New.cshtml" />
+    <Content Include="Views\Publisher\Edit.cshtml" />
+    <Content Include="Views\Publisher\Delete.cshtml" />
+    <Content Include="Views\Contact\Index.cshtml" />
+    <Content Include="Views\Contact\Details.cshtml" />
+    <Content Include="Views\Contact\New.cshtml" />
+    <Content Include="Views\Contact\Edit.cshtml" />
+    <Content Include="Views\Contact\Delete.cshtml" />
+    <Content Include="Views\Review\Index.cshtml" />
+    <Content Include="Views\Review\New.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\MyValidations\" />
     <Folder Include="Views\Address\" />
-    <Folder Include="Views\Contact\" />
     <Folder Include="Views\Delivery\" />
-    <Folder Include="Views\Review\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -300,6 +313,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012240854220_DropDelivery.resx">
       <DependentUpon>202012240854220_DropDelivery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012262145136_UpdateContactPublisher.resx">
+      <DependentUpon>202012262145136_UpdateContactPublisher.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

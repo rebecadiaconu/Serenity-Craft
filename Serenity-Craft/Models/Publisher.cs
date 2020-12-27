@@ -15,7 +15,6 @@ namespace Serenity_Craft.Models
         // -- navigation properties --
 
         // one-to-one relationship
-        [Required]
         public virtual Contact Contact { get; set; }
 
         // one-to-many

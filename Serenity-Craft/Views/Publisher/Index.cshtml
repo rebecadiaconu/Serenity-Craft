@@ -4,6 +4,29 @@
 
 <h2>@ViewBag.Title</h2>
 
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">
+        <p>Avem @ViewBag.Message carti ce sunt publicate de aceasta librarie.</p>
+        <p>Stergea ei implica si stergea tuturor acestor carti.</p>
+        <h3>Sunteti sigur de modificare?</h3>
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
+            new { id = ViewBag.PubId, delete = 1 }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Index", controllerName: "Publisher", method: FormMethod.Get, routeValues:
+            new { id = (dynamic)null }))
+        {
+            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
+        }
+    </div>
+}
+
 @foreach (var pub in ViewBag.publishers)
 {
     <ul class="panel-body">
@@ -14,6 +37,20 @@
         {
             <button class="btn btn-primary">Details</button>
         }
+
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
+            new { id = pub.PublisherId }))
+        {
+            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
+            new { id = pub.PublisherId }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
+        }
+        <br />
     </ul>
 }
 

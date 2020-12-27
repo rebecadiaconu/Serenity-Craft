@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "My reviews";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Reviews.Count == 0)
+{
+    <p>You haven't done any reviews yet!</p>
+}
+else
+{
+    foreach (var review in ViewBag.Reviews)
+    {
+        @Html.Label("Title", "Book's title:")
+        <br />
+        <p>@review.Book.Title</p>
+        <br />
+        <br />
+
+        @Html.Label("Author", "Book's author:")
+        <br />
+        <p>@review.Book.Author</p>
+        <br />
+        <br />
+
+        using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
+            routeValues: new { id = review.BookId }))
+        {
+            <button class="btn btn-primary">Details</button>
+        }
+
+        @Html.Label("UserName", "Username:")
+        <br />
+        <p>@review.UserName</p>
+        <br />
+        <br />
+
+        @Html.Label("Text", "Review:")
+        <br />
+        <p>@review.Text</p>
+        <br />
+        <br />
+
+        @Html.Label("Note", "Book's rating:")
+        <br />
+        <p>@review.Note</p>
+        <br />
+        <br />
+
+        @Html.Label("ReviewDate", "review's date:")
+        <br />
+        <p>@review.ReviewDate</p>
+        <br />
+        <br />
+
+    }
+}

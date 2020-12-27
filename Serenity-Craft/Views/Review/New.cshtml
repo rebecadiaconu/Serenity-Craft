@@ -1,0 +1,34 @@
+﻿@model Serenity_Craft.Models.Review
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>New</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@using (Html.BeginForm("New", "Review", FormMethod.Post))
+{
+    @Html.HiddenFor(p =>p.ReviewId)
+
+    @Html.Label("Text", "Your review:")
+    <br />
+    @Html.TextArea("Text", null, new { placeholder = "Type in the book's review", @class = "form-control", @rows = "10" })
+    @Html.ValidationMessageFor(b => b.Text, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+
+    @Html.Label("Note", "Book's evaluation:")
+    <br />
+    @Html.DropDownListFor(c => c.Note, new SelectList(ViewBag.Notes, "Value", "Text"), "Choose a note", new { @class = "form-control" })
+    @Html.ValidationMessageFor(c => c.Note, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+    <button class="btn btn-primary" type="submit">Add</button>
+}
+

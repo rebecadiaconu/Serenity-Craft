@@ -8,11 +8,13 @@ namespace Serenity_Craft.Models
         [Key]
         public int ReviewId { get; set; }
 
-        [MaxLength(300, ErrorMessage = "Your opinion matters to us, but try to make it shorter!")]
+        [MaxLength(500, ErrorMessage = "Your opinion matters to us, but try to make it shorter!")]
         public string Text { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required,
+         DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime ReviewDate { get; set; }
+
         [Required]
         public int Note { get; set; }
 

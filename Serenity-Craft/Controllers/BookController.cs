@@ -46,6 +46,7 @@ namespace Serenity_Craft.Controllers
             {
                 BookTypesList = GetAllBookTypes(),
                 PublishersList = GetAllPublishers(),
+                GenresList = GetAllGenres(),
                 Genres = new List<Genre>(),
                 Reviews = new List<Review>()
             };
@@ -65,11 +66,20 @@ namespace Serenity_Craft.Controllers
                 bookReq.BookTypesList = GetAllBookTypes();
                 bookReq.PublishersList = GetAllPublishers();
 
+                var genreSelected = bookReq.GenresList.Where(b => b.Checked).ToList();
+
                 if (ModelState.IsValid)
                 {
 
                     if (NotExists(bookReq) == -1)
                     {
+                        bookReq.Genres = new List<Genre>();
+                        for (int i = 0; i < genreSelected.Count(); i++)
+                        {
+                            Genre genre = db.Genres.Find(genreSelected[i].Id);
+                            bookReq.Genres.Add(genre);
+                        }
+
                         db.Books.Add(bookReq);
                         db.SaveChanges();
 
@@ -83,7 +93,7 @@ namespace Serenity_Craft.Controllers
                 ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
                 return View(bookReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Message = "Something went wrong. Please try again!";
                 return View(bookReq);
@@ -99,8 +109,14 @@ namespace Serenity_Craft.Controllers
                 Book book = db.Books.Find(id);
                 if (book != null)
                 {
+                    book.GenresList = GetAllGenres();
                     book.BookTypesList = GetAllBookTypes();
                     book.PublishersList = GetAllPublishers();
+
+                    foreach (Genre checkedGenre in book.Genres)
+                    {
+                        book.GenresList.FirstOrDefault(g => g.Id == checkedGenre.GenreId).Checked = true;
+                    }
 
                     return View(book);
                 }
@@ -122,6 +138,8 @@ namespace Serenity_Craft.Controllers
                 bookReq.BookTypesList = GetAllBookTypes();
                 bookReq.PublishersList = GetAllPublishers();
 
+                var selectedGenres = bookReq.GenresList.Where(b => b.Checked).ToList();
+
                 if (ModelState.IsValid)
                 {
                     if (NotExists(bookReq) == -1 || NotExists(bookReq) == id)
@@ -135,10 +153,19 @@ namespace Serenity_Craft.Controllers
                             book.Author = bookReq.Author;
                             book.Pages = bookReq.Pages;
                             book.Price = bookReq.Price;
-                            book.InStock = bookReq.InStock;
                             book.Summary = bookReq.Summary;
                             book.Publisher = bookReq.Publisher;
                             book.BookType = bookReq.BookType;
+
+                            book.Genres.Clear();
+                            book.Genres = new List<Genre>();
+
+                            for (int i = 0; i < selectedGenres.Count(); i++)
+                            {
+                                Genre genre = db.Genres.Find(selectedGenres[i].Id);
+                                book.Genres.Add(genre);
+                            }
+
                             db.SaveChanges();
                         }
                         return RedirectToAction("Index");
@@ -151,7 +178,7 @@ namespace Serenity_Craft.Controllers
                 ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
                 return View(bookReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Message = "Something went wrong. Please try again!";
                 return View(bookReq);
@@ -205,6 +232,22 @@ namespace Serenity_Craft.Controllers
             }
 
             return selectList;
+        }
+
+        [NonAction]
+        public List<CheckBoxModel> GetAllGenres()
+        {
+            var checkboxList = new List<CheckBoxModel>();
+            foreach (var genre in db.Genres.ToList())
+            {
+                checkboxList.Add(new CheckBoxModel
+                {
+                    Id = genre.GenreId,
+                    Name = genre.Name,
+                    Checked = false
+                });
+            }
+            return checkboxList;
         }
 
         [NonAction]

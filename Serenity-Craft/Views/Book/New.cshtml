@@ -40,16 +40,9 @@
     <br />
     <br />
 
-    @Html.Label("Pieces in stock", "Pieces in stock:")
-    <br />
-    @Html.TextBoxFor(b => b.InStock, null, new { placeholder = "Type in the book's number of pieces in stock", @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.InStock, "", new { @class = "text-danger" })
-    <br />
-    <br />
-
     @Html.Label("Summary", "Summary:")
     <br />
-    @Html.TextArea("Summary", null, new { placeholder = "Type in the book's summary", @class = "formcontrol", @rows = "10" })
+    @Html.TextArea("Summary", null, new { placeholder = "Type in the book's summary", @class = "form-control", @rows = "10" })
     @Html.ValidationMessageFor(b => b.Summary, "", new { @class = "text-danger" })
     <br />
     <br />
@@ -67,6 +60,17 @@
     @Html.ValidationMessageFor(b => b.PublisherId, "", new { @class = "text-danger" })
     <br />
     <br />
+
+    @Html.LabelFor(b => b.GenresList, "Choose genres:")
+    <br />
+    for (int i = 0; i < Model.GenresList.Count(); i++)
+    {
+        @Html.HiddenFor(b => b.GenresList[i].Id)
+        @Html.HiddenFor(b => b.GenresList[i].Name)
+        @Html.CheckBoxFor(b => b.GenresList[i].Checked)
+        @Html.DisplayFor(b => b.GenresList[i].Name)
+        <br />
+    }
 
     <button class="btn btn-primary" type="submit">Add</button>
 }

@@ -57,17 +57,11 @@
             }
         }
 
-        @if (book.InStock > 0)
-        {
-            @Html.Label("Price", "Price:")
-            <br />
+       
+        @Html.Label("Price", "Price:")
+        <br />
 
-            <p>@book.Price RON</p>
-        }
-        else
-        {
-            <p class="text-danger">Stoc epuizat!</p>
-        }
+        <p>@book.Price RON</p>
 
         @using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
             routeValues: new { id = book.BookId }))

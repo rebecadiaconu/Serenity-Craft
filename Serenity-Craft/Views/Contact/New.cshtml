@@ -1,0 +1,44 @@
+﻿@model Serenity_Craft.Models.PublisherContactInfo
+@{
+    ViewBag.Title = "New Contact";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Message1 != null && ViewBag.Message2 != null)
+{
+    <div class="alert alert-danger" style="position: relative">
+        <p>@ViewBag.Message1</p>
+        <p>@ViewBag.Message2</p>
+
+        @using (Html.BeginForm(actionName: "Index", controllerName: "Publisher", method: FormMethod.Get))
+        {
+            <button style="margin: auto 0; position: absolute; right: 0; top: 0; bottom: 0" class="btn btn-primary col-lg-1" type="submit">Lista Edituri</button>
+        }
+    </div>
+}
+
+@using (Html.BeginForm("New", "Contact", FormMethod.Post))
+{
+    @Html.Label("Name", "Name:")
+    <br />
+    @Html.TextBoxFor(p => p.Name, null, new { placeholder = "Type in the publisher's name", @class = "form-control" })
+    @Html.ValidationMessageFor(p => p.Name, "", new { @class = "text-danger" })
+    <br />
+
+    @Html.Label("PhoneNumber", "Phone number:")
+    <br />
+    @Html.TextBoxFor(p => p.PhoneNumber, null, new { placeholder = "Type in the publisher's phone number", @class = "form-control" })
+    @Html.ValidationMessageFor(p => p.PhoneNumber, "", new { @class = "text-danger" })
+    <br />
+
+    @Html.Label("Email", "Email:")
+    <br />
+    @Html.TextBoxFor(p => p.Email, null, new { placeholder = "Type in the publisher's email", @class = "form-control" })
+    @Html.ValidationMessageFor(p => p.Email, "", new { @class = "text-danger" })
+    <br />
+
+    <button class="btn btn-primary" type="submit">Add</button>
+}
+
+

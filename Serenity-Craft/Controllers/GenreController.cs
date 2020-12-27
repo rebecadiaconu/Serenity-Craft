@@ -15,19 +15,13 @@ namespace Serenity_Craft.Controllers
         public ActionResult Index(int? id)
         {
             List<Genre> genres = db.Genres.ToList();
-
             ViewBag.Genres = genres;
 
             if (id.HasValue)
             {
-                if (id == 0)
-                {
-                    ViewBag.Message =
-                        "Exista carti de vor ramane fara gen. Fa modificarile necesare inainte de stergere!";
-                    return View();
-                }
+                ViewBag.Message = AllBooks((int)id).ToString();
+                ViewBag.GenreId = id;
 
-                ViewBag.Message = null;
                 return View();
             }
 
@@ -50,7 +44,6 @@ namespace Serenity_Craft.Controllers
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     Genre searchGenre = db.Genres.SingleOrDefault(p => p.Name.Equals(genreReq.Name));
@@ -124,7 +117,7 @@ namespace Serenity_Craft.Controllers
                 ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
                 return View(genreReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Message = "Something went wrong... Please try again!";
                 return View(genreReq);
@@ -133,12 +126,27 @@ namespace Serenity_Craft.Controllers
 
         // DELETE
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, int? delete)
         {
             Genre genre = db.Genres.Find(id);
 
             if (genre != null)
             {
+                if (delete.HasValue && delete == 1)
+                {
+                    foreach (var book in db.Books.ToList())
+                    {
+                        if (book.Genres.Count == 1 && book.Genres.Contains(genre))
+                        {
+                            db.Books.Remove(book);
+                        }
+                    }
+
+                    db.Genres.Remove(genre);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
 
                 if (AllBooks(id) == 0)
                 {
@@ -148,7 +156,7 @@ namespace Serenity_Craft.Controllers
                     return RedirectToAction("Index");
                 }
 
-                return RedirectToAction("Index", new { id = 0 });
+                return RedirectToAction("Index", new { id = id });
             }
 
             return HttpNotFound("Genul de carte nu exista!");

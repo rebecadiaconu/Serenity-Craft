@@ -8,12 +8,6 @@ namespace Serenity_Craft.Models
 {
     public class Book
     {
-        public Book()
-        {
-            this.BookRating = 0;
-        }
-
-
         [Key]
         public int BookId { get; set; }
 
@@ -28,29 +22,38 @@ namespace Serenity_Craft.Models
         public string Author { get; set; }
 
         [Required,
-         RegularExpression("[0-9]+")]
+         RegularExpression(@"\d+(?:\.\d+)?")]
         public int Pages { get; set; }
 
         [MaxLength(600, ErrorMessage = "Summary way too long, try to make it shorter!")]
         public string Summary { get; set; }
 
-
-        //public string ImageFileName { get; set; }
+        //[Required]
+        //public string ImagePath { get; set; }
 
         [Required,
-         RegularExpression("[0-9]+")]
+         RegularExpression(@"\d+(?:\.\d+)?")]
         public double Price { get; set; }
 
 
-        public double BookRating { get; set; }
+        private double _bookRating;
+        public double BookRating
+        {
+            get => _bookRating;
+            set => value = CalculateBookRating();
+        }
 
-        [RegularExpression("[0-9]+")]
-        public int InStock { get; set; }
+        // dropdown lists
 
         [NotMapped]
         public IEnumerable<SelectListItem> PublishersList { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem> BookTypesList { get; set; }
+
+        // checkbox lists
+
+        [NotMapped]
+        public List<CheckBoxModel> GenresList { get; set; }
 
         // --------------------------
 
@@ -73,5 +76,22 @@ namespace Serenity_Craft.Models
         // many-to-many relationship
         public virtual ICollection<Genre> Genres { get; set; }
 
+
+        private double CalculateBookRating()
+        {
+            double rating = 0;
+
+            if (Reviews == null || Reviews.Count == 0) return rating;
+
+            int sum = 0;
+
+            foreach (var review in Reviews)
+            {
+                sum += review.Note;
+            }
+            rating = sum / Reviews.Count;
+
+            return rating;
+        }
     }
 }

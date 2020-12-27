@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Publisher Contacts";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">
+        <p>Dupa stergerea contactului, editura va ramane imposibil de contactat. </p>
+        <p>Doriti in schimb <h3>sa modificati</h3> datele de contact?</p>
+        
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+            new { id = ViewBag.Message }))
+        {
+            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
+        }
+
+        @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
+            new { id = ViewBag.Message, delete = 1 }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
+        }
+    </div>
+}
+
+<ol>
+    @foreach (var contact in ViewBag.contacts)
+    {
+        <li>
+            <p>@contact.Publisher.Name</p>
+
+            <ul>
+                <li>@contact.PhoneNumber</li>
+                <li>@contact.Email</li>
+            </ul>
+        </li>
+
+        using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+                    new { id = contact.PublisherId }))
+        {
+            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
+        }
+
+        using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
+            new { id = contact.PublisherId }))
+        {
+            @Html.HttpMethodOverride(HttpVerbs.Delete)
+            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
+        }
+
+        <br />
+        <br />
+        <br />
+    }
+</ol>
+
+@using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get, routeValues: new { id = 1 }))
+{
+    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
+}

@@ -7,13 +7,13 @@ namespace Serenity_Craft.Models
     public class Contact
     {
         [Key]
-        [ForeignKey("Publisher")]
+        [ForeignKey("Publisher")] 
         public int PublisherId { get; set; }
 
         [RegularExpression(@"^0(\d{9})$", ErrorMessage = "This is not a valid phone number!")]
         public string PhoneNumber { get; set; }
 
-        [EmailAddress]
+        [EmailAddress] 
         public string Email { get; set; }
 
         // -- navigation properties --

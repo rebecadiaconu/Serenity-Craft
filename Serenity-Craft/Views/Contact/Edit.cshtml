@@ -1,0 +1,36 @@
+﻿@model Serenity_Craft.Models.Contact
+
+
+<h2>@ViewBag.Name </h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@using (Html.BeginForm("Edit", "Contact"))
+{
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+
+    @Html.HiddenFor(b => b.PublisherId)
+
+    <br />
+
+    <br />
+
+    @Html.Label("PhoneNumber", "Phone number:")
+    <br />
+    @Html.EditorFor(b => b.PhoneNumber, new { placeholder = "Type in the publisher's phone number", @class = "form-control" })
+    @Html.ValidationMessageFor(b => b.PhoneNumber, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+    @Html.Label("Email", "Email:")
+    <br />
+    @Html.EditorFor(b => b.Email, new { placeholder = "Type in the publisher's email", @class = "form-control" })
+    @Html.ValidationMessageFor(b => b.Email, "", new { @class = "text-danger" })
+    <br />
+    <br />
+
+    <button class="btn btn-primary" type="submit">Update</button>
+}

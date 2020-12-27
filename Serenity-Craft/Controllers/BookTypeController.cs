@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Serenity_Craft.Models;
 
@@ -20,17 +19,12 @@ namespace Serenity_Craft.Controllers
 
             if (id.HasValue)
             {
-                if (id == 0)
-                {
-                    ViewBag.Message =
-                        "Exista carti cu acest tip de carte. Fa modificarile necesare inainte de stergere!";
-                    return View();
-                }
+                ViewBag.Message = AllBooks((int)id).ToString();
+                ViewBag.TypeId = id;
 
-                ViewBag.Message = null;
                 return View();
             }
-            
+
             ViewBag.Message = null;
             return View();
         }
@@ -50,7 +44,6 @@ namespace Serenity_Craft.Controllers
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     BookType searchBookType = db.BookTypes.SingleOrDefault(p => p.Name.Equals(typeReq.Name));
@@ -70,7 +63,7 @@ namespace Serenity_Craft.Controllers
                 ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
                 return View(typeReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Message = "Something went wrong. Please try again!";
                 return View(typeReq);
@@ -124,7 +117,7 @@ namespace Serenity_Craft.Controllers
                 ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
                 return View(typeReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ViewBag.Message = "Something went wrong... Please try again!";
                 return View(typeReq);
@@ -133,14 +126,13 @@ namespace Serenity_Craft.Controllers
 
         // DELETE
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, int? delete)
         {
             BookType bType = db.BookTypes.Find(id);
 
             if (bType != null)
             {
-
-                if (AllBooks(id) == 0)
+                if (delete.HasValue && delete == 1)
                 {
                     db.BookTypes.Remove(bType);
                     db.SaveChanges();
@@ -148,7 +140,17 @@ namespace Serenity_Craft.Controllers
                     return RedirectToAction("Index");
                 }
 
-                return RedirectToAction("Index", new { id = 0 });
+                int noOfbooks = AllBooks(id);
+                
+                if (noOfbooks == 0)
+                {
+                    db.BookTypes.Remove(bType);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+
+                return RedirectToAction("Index", new { id = id });
             }
 
             return HttpNotFound("Tipul de carte nu exista!");

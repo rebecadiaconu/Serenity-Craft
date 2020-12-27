@@ -53,16 +53,27 @@ namespace Serenity_Craft.Migrations
                 throw;
             }
 
-
-            var publishers = new List<Publisher>
+            var contacts = new List<Contact>
             {
-                new Publisher {Name = "Hachette Livre"},
-                new Publisher {Name = "Herper Collins"},
-                new Publisher {Name = "Wiley"}
+                new Contact
+                {
+                    PhoneNumber = "0234567801",
+                    Email = "wiley@gmail.com"
+                },
+                new Contact
+                {
+                    PhoneNumber = "0756444200",
+                    Email = "hlivre@gmail.com"
+                },
+                new Contact
+                {
+                    PhoneNumber = "0780266113",
+                    Email = "collins_harper@yahoo.com"
+                }
             };
             try
             {
-                publishers.ForEach(pb => context.Publishers.AddOrUpdate(p => p.Name, pb));
+                contacts.ForEach(c => context.Contacts.AddOrUpdate(p => p.PublisherId, c));
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)
@@ -80,30 +91,15 @@ namespace Serenity_Craft.Migrations
                 throw;
             }
 
-            var contacts = new List<Contact>
+            var publishers = new List<Publisher>
             {
-                new Contact
-                {
-                    PublisherId = publishers.Single(i =>i.Name == "Wiley").PublisherId,
-                    PhoneNumber = "0234567801",
-                    Email = "wiley@gmail.com"
-                },
-                new Contact
-                {
-                    PublisherId = publishers.Single(i =>i.Name == "Hachette Livre").PublisherId,
-                    PhoneNumber = "0756444200",
-                    Email = "hlivre@gmail.com"
-                },
-                new Contact
-                {
-                    PublisherId = publishers.Single(i =>i.Name == "Herper Collins").PublisherId,
-                    PhoneNumber = "0780266113",
-                    Email = "collins_harper@yahoo.com"
-                }
+                new Publisher {Name = "Hachette Livre"},
+                new Publisher {Name = "Herper Collins"},
+                new Publisher {Name = "Wiley"}
             };
             try
             {
-                contacts.ForEach(c => context.Contacts.AddOrUpdate(p => p.PublisherId, c));
+                publishers.ForEach(pb => context.Publishers.AddOrUpdate(p => p.Name, pb));
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)
@@ -173,10 +169,11 @@ namespace Serenity_Craft.Migrations
                     Summary = "",
                     Price = 46,
                     BookRating = 0,
-                    InStock = 300,
                     PublisherId = publishers.Single(p => p.Name == "Wiley").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
-                    Genres = new List<Genre>()
+                    Genres = new List<Genre>(),
+                    Reviews = new List<Review>()
+
                 },
                 new Book
                 {
@@ -186,10 +183,10 @@ namespace Serenity_Craft.Migrations
                     Summary = "",
                     Price = 50,
                     BookRating = 0,
-                    InStock = 300,
                     PublisherId = publishers.Single(p => p.Name == "Herper Collins").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
-                    Genres = new List<Genre>()
+                    Genres = new List<Genre>(),
+                    Reviews = new List<Review>()
                 },
                 new Book
                 {
@@ -199,10 +196,10 @@ namespace Serenity_Craft.Migrations
                     Summary = "",
                     Price = 30,
                     BookRating = 0,
-                    InStock = 300,
                     PublisherId = publishers.Single(p => p.Name == "Hachette Livre").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
-                    Genres = new List<Genre>()
+                    Genres = new List<Genre>(),
+                    Reviews = new List<Review>()
                 }
             };
             try
