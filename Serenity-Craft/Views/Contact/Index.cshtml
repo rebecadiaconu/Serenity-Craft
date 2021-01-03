@@ -15,20 +15,13 @@
     @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
         new { id = ViewBag.Message }))
     {
-        <button class="btn btn-danger " type="submit" style="position: absolute; left: 33%;">YES</button>
-    }
-
-    @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
-        new { id = ViewBag.Message, delete = 1 }))
-    {
-        @Html.HttpMethodOverride(HttpVerbs.Delete)
-        <button class="btn btn-primary" type="submit" style="position: absolute; right: 50%;">NO</button>
+        <button class="btn btn-danger " type="submit" style="position: absolute; left: 40%;">YES</button>
     }
 
     @using (Html.BeginForm(actionName: "Index", controllerName: "Contact", method: FormMethod.Get, routeValues:
         new { id = (dynamic)null }))
     {
-        <button class="btn btn-info" type="submit" style="position: absolute; right: 33%;">Don't delete</button>
+        <button class="btn btn-info" type="submit" style="position: absolute; right: 40%;">Don't delete</button>
     }
     <br />
     <br />

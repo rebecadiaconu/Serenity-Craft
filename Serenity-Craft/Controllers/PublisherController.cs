@@ -125,6 +125,14 @@ namespace Serenity_Craft.Controllers
         {
             try
             {
+                //Contact contact = new Contact
+                //{
+                //    PublisherId = id,
+                //    PhoneNumber = pubReq.Contact.PhoneNumber,
+                //    Email = pubReq.Contact.em
+                //};
+                //pubReq.Contact.PublisherId = id;
+
                 if (ModelState.IsValid)
                 {
                     if (NotExists(pubReq.Name) == -1 || NotExists(pubReq.Name) == id)
@@ -146,6 +154,10 @@ namespace Serenity_Craft.Controllers
                     ViewBag.Message = "Publisher with the same name already exists in our database!";
                     return View(pubReq);
                 }
+                var errors = ModelState.Select(x => x.Value.Errors)
+                    .Where(y => y.Count > 0)
+                    .ToList();
+                Console.WriteLine(errors);
 
                 ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(pubReq);
