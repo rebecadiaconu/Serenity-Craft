@@ -6,89 +6,95 @@
     @ViewBag.Title
 </h2>
 
-@foreach (var book in ViewBag.Books)
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
-    <div class="panel-body">
-        @Html.Label("Title", "Title:")
-        <br />
-        <p>@book.Title</p>
-
-        @Html.Label("Author", "Author:")
-        <br />
-        <p>@book.Author</p>
-
-        @Html.Label("Rating", "Rating:")
-        <br />
-
-        @{
-            var rating = (int)book.BookRating;
-            switch (rating)
-            {
-                case 0:
-                    <text>
-                        <p>☆☆☆☆☆</p>
-                    </text>
-                    break;
-                case 1:
-                    <text>
-                        <p>⭐☆☆☆☆</p>
-                    </text>
-                    break;
-                case 2:
-                    <text>
-                        <p>⭐⭐☆☆☆</p>
-                    </text>
-                    break;
-                case 3:
-                    <text>
-                        <p>⭐⭐⭐☆☆</p>
-                    </text>
-                    break;
-                case 4:
-                    <text>
-                        <p>⭐⭐⭐⭐☆</p>
-                    </text>
-                    break;
-                case 5:
-                    <text>
-                        <p>⭐⭐⭐⭐⭐</p>
-                    </text>
-                    break;
-            }
-        }
-
-       
-        @Html.Label("Price", "Price:")
-        <br />
-
-        <p>@book.Price RON</p>
-
-        @using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
-            routeValues: new { id = book.BookId }))
-        {
-            <button class="btn btn-primary">Details</button>
-        }
-
-        @using (Html.BeginForm(actionName: "Edit", controllerName: "Book", method: FormMethod.Get, routeValues:
-            new { id = book.BookId }))
-        {
-            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
-        }
-
-        @using (Html.BeginForm(actionName: "Delete", controllerName: "Book", method: FormMethod.Post, routeValues:
-            new { id = book.BookId }))
-        {
-            @Html.HttpMethodOverride(HttpVerbs.Delete)
-            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
-        }
-        <br />
-
-
-    </div>
+    using (Html.BeginForm(actionName: "New", controllerName: "Book", method: FormMethod.Get))
+    {
+        <input style="height: 40px; width: 40px; position: absolute; right: 20%; top: 70px;"  type="image" src="~/Content/images/plus.png" />
+    }
 }
 
-@using (Html.BeginForm(actionName: "New", controllerName: "Book", method: FormMethod.Get))
-{
-    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
-}
+<br />
+
+<div class="row" style="text-align: center;">
+    @foreach (var book in ViewBag.Books)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img class="book-img" src="@book.ImagePath" alt="book's image" style="height: 400px">
+                <div class="caption">
+                    @{
+                        double rating = 0;
+
+                        if (book.Reviews.Count != 0)
+                        {
+                            int sum = 0;
+
+                            foreach (var review in book.Reviews)
+                            {
+                                sum += review.Note;
+                            }
+
+                            rating = sum / book.Reviews.Count;
+                        }
+
+                        switch (rating)
+                        {
+                            case 0:
+                                <text>
+                                    <p>☆☆☆☆☆ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                            case 1:
+                                <text>
+                                    <p>⭐☆☆☆☆ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                            case 2:
+                                <text>
+                                    <p>⭐⭐☆☆☆ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                            case 3:
+                                <text>
+                                    <p>⭐⭐⭐☆☆ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                            case 4:
+                                <text>
+                                    <p>⭐⭐⭐⭐☆ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                            case 5:
+                                <text>
+                                    <p>⭐⭐⭐⭐⭐ (@book.Reviews.Count)</p>
+                                </text>
+                                break;
+                        }
+                    }
+                    <h3>@book.Title</h3>
+                    <h3><small>@book.Author</small></h3>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
+                            routeValues: new { id = book.BookId }))
+                        {
+                            <button class="btn btn-primary">Details</button>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm(actionName: "Login", controllerName: "Account", method: FormMethod.Get,
+                            routeValues: new { id = book.BookId }))
+                        {
+                            <button class="btn btn-info">Details</button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
 

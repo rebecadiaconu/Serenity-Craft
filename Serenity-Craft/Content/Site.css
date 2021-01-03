@@ -1,12 +1,21 @@
 ﻿body {
+    color: black;
+    font-family: 'Poppins', sans-serif;
     padding-top: 50px;
     padding-bottom: 20px;
+    height: 100%;
+    /*    text-align: center;
+*/
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+}
+
+.container, .body-content {
+    height: 100%;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -16,9 +25,105 @@
     white-space: normal;
 }
 
+.footer {
+    padding-top: 50px;
+}
+
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.navbar {
+    background-color: #e74b65;
+}
+
+.navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-brand, .dropdown-toggle {
+    color: #2E2B3B;
+}
+
+.dropdown-toggle {
+    padding-top: 15px;
+    margin-bottom: 20px;
+}
+
+
+.dropdown:hover .dropdown-menu {
+    display: block !important;
+    color: #2E2B3B;
+}
+
+.footer {
+    position: relative;
+    margin-top: -150px; /* negative value of footer height */
+    height: 150px;
+    clear: both;
+    padding-top: 20px;
+}
+
+
+/* --------- my classes ---------- */
+.about {
+    border-radius: 10px;
+    background-color: #ffb4a2;
+    color: #2E2B3B;
+    padding-top: 170px;
+    padding-left: 180px;
+    position: absolute;
+    right: 15%;
+    top: 130px;
+    height: 730px;
+    width: 40%;
+}
+
+.about h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem;
+    font-weight: bold;
+}
+
+.about img {
+    width: 60px;
+}
+
+.brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.large-header {
+    font-size: 35rem;
+}
+
+.presentation {
+    border-radius: 10px;
+    background-color: #E74B65;
+    color: white;
+    padding-top: 80px;
+    padding-left: 130px;
+    position: absolute;
+    left: 12%;
+    top: 80px;
+    height: 730px;
+    width: 40%;
+    z-index: 2;
+}
+
+.pres-img {
+    height: 300px;
+    margin-left: 30px;
+}
+
+.name {
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.start-btn:hover {
+    text-decoration: none;
 }

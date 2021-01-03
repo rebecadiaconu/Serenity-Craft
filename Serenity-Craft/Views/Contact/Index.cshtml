@@ -2,61 +2,92 @@
     ViewBag.Title = "Publisher Contacts";
 }
 
-<h2>@ViewBag.Title</h2>
+<br />
+<br />
 
 @if (ViewBag.Message != null)
 {
-    <div class="alert alert-danger ">
-        <p>Dupa stergerea contactului, editura va ramane imposibil de contactat. </p>
-        <p>Doriti in schimb <h3>sa modificati</h3> datele de contact?</p>
-        
-        @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
-            new { id = ViewBag.Message }))
-        {
-            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
-        }
+<div class="alert alert-warning" style="text-align: center; position: relative">
+    <p>If you delete this contact, the publisher will be impossible get in tough with. </p>
+    <p>Would you like to edit the contact instead?</p>
+    <br/>
 
-        @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
-            new { id = ViewBag.Message, delete = 1 }))
-        {
-            @Html.HttpMethodOverride(HttpVerbs.Delete)
-            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
-        }
-    </div>
+    @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+        new { id = ViewBag.Message }))
+    {
+        <button class="btn btn-danger " type="submit" style="position: absolute; left: 33%;">YES</button>
+    }
+
+    @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
+        new { id = ViewBag.Message, delete = 1 }))
+    {
+        @Html.HttpMethodOverride(HttpVerbs.Delete)
+        <button class="btn btn-primary" type="submit" style="position: absolute; right: 50%;">NO</button>
+    }
+
+    @using (Html.BeginForm(actionName: "Index", controllerName: "Contact", method: FormMethod.Get, routeValues:
+        new { id = (dynamic)null }))
+    {
+        <button class="btn btn-info" type="submit" style="position: absolute; right: 33%;">Don't delete</button>
+    }
+    <br />
+    <br />
+</div>
 }
+<br />
+<br />
 
-<ol>
+<div style="position: relative;">
+    <h2>@ViewBag.Title</h2>
+
+    @using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get, routeValues: new { id = 1 }))
+    {
+        <input style="height: 40px; width: 40px; position: absolute; right: 0; top: 0;" type="image" src="~/Content/images/plus.png" />
+    }
+</div>
+
+
+<br />
+<br />
+<table class="table table-hover table-responsive table-condense" style="width: 100%">
+    <thead>
+        <tr>
+            <th scope="col" class="col-md-4"><h4>Publisher Name</h4></th>
+            <th scope="col" class="col-md-3"><h4>Phone Number</h4></th>
+            <th scope="col" class="col-md-4"><h4>Email</h4></th>
+            <th scope="col" class="col-md-3"><h4>More</h4></th>
+        </tr>
+    </thead>
+    <tbody>
     @foreach (var contact in ViewBag.contacts)
     {
-        <li>
-            <p>@contact.Publisher.Name</p>
+        <tr>
+            <th scope="row">@contact.Publisher.Name</th>
+            <th scope="row">@contact.PhoneNumber</th>
+            <th scope="row">@contact.Email</th>
+            <td>
+                <div class="row">
+                    <div class="col-md-4">
+                        @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+                            new { id = contact.PublisherId }))
+                        {
+                            <input style="height: 30px; width: 30px;"  type="image" src="~/Content/images/edit.png" />
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
+                            new { id = contact.PublisherId }))
+                        {
+                            @Html.HttpMethodOverride(HttpVerbs.Delete)
+                            <input style="height: 30px; width: 30px;" type="image" src="~/Content/images/remove.png" />
+                        }
+                    </div>
 
-            <ul>
-                <li>@contact.PhoneNumber</li>
-                <li>@contact.Email</li>
-            </ul>
-        </li>
-
-        using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
-                    new { id = contact.PublisherId }))
-        {
-            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
-        }
-
-        using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
-            new { id = contact.PublisherId }))
-        {
-            @Html.HttpMethodOverride(HttpVerbs.Delete)
-            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
-        }
-
-        <br />
-        <br />
-        <br />
+                </div>
+                <br />
+            </td>
+        </tr>
     }
-</ol>
-
-@using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get, routeValues: new { id = 1 }))
-{
-    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
-}
+    </tbody>
+</table>
+<br />

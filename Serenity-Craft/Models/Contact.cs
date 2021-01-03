@@ -1,6 +1,7 @@
 ﻿using Serenity_Craft.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Serenity_Craft.Models.MyValidations;
 
 namespace Serenity_Craft.Models
 {
@@ -10,10 +11,10 @@ namespace Serenity_Craft.Models
         [ForeignKey("Publisher")] 
         public int PublisherId { get; set; }
 
-        [RegularExpression(@"^0(\d{9})$", ErrorMessage = "This is not a valid phone number!")]
+        [PhoneNumberValidation]
         public string PhoneNumber { get; set; }
 
-        [EmailAddress] 
+        [EmailValidation] 
         public string Email { get; set; }
 
         // -- navigation properties --

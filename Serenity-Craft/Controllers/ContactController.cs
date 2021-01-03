@@ -7,6 +7,7 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ContactController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -15,8 +16,8 @@ namespace Serenity_Craft.Controllers
         [HttpGet]
         public ActionResult Index(int? id)
         {
-            List<Contact> contacts = db.Contacts.ToList();
-            ViewBag.contacts = contacts;
+            var contacts = db.Contacts.OrderBy(c=>c.Publisher.Name);
+            ViewBag.contacts = contacts.ToList();
 
             if (id.HasValue)
             {
@@ -35,15 +36,16 @@ namespace Serenity_Craft.Controllers
         {
             if (id.HasValue)
             {
-                Contact contact = db.Publishers.Find(id).Contact;
+                Contact contact = db.Contacts.Find(id);
                 if (contact != null)
                 {
                     ViewBag.Name = contact.Publisher.Name;
                     return View(contact);
                 }
-                return HttpNotFound("Nu exista acest contact!");
+                return HttpNotFound("Couldn't find the contact you are searching for...");
             }
-            return HttpNotFound("Parametrul lipseste!");
+
+            return HttpNotFound("Parameter is missing...");
         }
 
         [HttpPut]
@@ -74,7 +76,7 @@ namespace Serenity_Craft.Controllers
                     .ToList();
                 Console.WriteLine(errors);
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(contactReq);
             }
             catch (Exception)
@@ -105,7 +107,7 @@ namespace Serenity_Craft.Controllers
                 return RedirectToAction("Index", new {id = id});
             }
 
-            return HttpNotFound("Contactul nu exista!");
+            return HttpNotFound("Couldn't find the contact you are searching for...");
         }
     }
 }

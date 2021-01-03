@@ -1,31 +1,45 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "serenity-craft.com";
+    Layout = null;
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div class="presentation">
+    <img class="pres-img" src="~/Content/images/icon-white.png" />
+    <h1 class="brand-name">serenity-craft.com</h1>
+    <p class="lead">Your place to feel free & put your <span>finger-print</span></p>
+    <p class="lead">on your favorite creations.</p>
+    <br/>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <button class="btn btn-lg">@Html.ActionLink("Login", "Login", "Account", null, new { style = "text-decoration:none; font-weight: bold; color: #2E2B3B" })</button>
+        <button class="btn btn-lg">@Html.ActionLink("Guest", "Index", "Book", null, new { style = "text-decoration:none; font-weight: bold; color: #2E2B3B" })</button>
+    }
+    else
+    {
+        <button class="btn btn-lg">@Html.ActionLink("Lets's go!", "Index", "Book", null, new { style = "text-decoration:none; font-weight: bold; color: #2E2B3B" })</button>
+    }
+    
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<div class="about">
+    <h1>About us</h1>
+    <br />
+    <p class="lead">Our app will help you share your opinion about</p>
+    <p class="lead">what you've loved and hated about a specific book.</p>
+    <br />
+    <p class="lead">Help others read wisely!</p>
+    <br />
+    <br />
+    <h1>Contact us anytime!</h1>
+    <br/>
+    <div class="row">
+        <img class="col-md-4" src="~/Content/images/email-icon.png" />
+        <p class="lead col-md-8">serenity@craft.com</p>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="row">
+        <img class="col-md-4" src="~/Content/images/phone-icon.png"/>
+        <p class="lead col-md-8">0724 331 009</p>
     </div>
 </div>

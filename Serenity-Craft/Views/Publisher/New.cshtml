@@ -1,14 +1,10 @@
 ﻿@model Serenity_Craft.Models.PublisherContactInfo
 @{
-    ViewBag.Title = "Add new publisher";
+    ViewBag.Title = "New publisher";
 }
 
-<h2>@ViewBag.Title</h2>
-
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-danger ">@ViewBag.Message</div>
-}
+<br />
+<br />
 
 @if (ViewBag.Message1 != null && ViewBag.Message2 != null)
 {
@@ -18,10 +14,25 @@
 
         @using (Html.BeginForm(actionName: "Index", controllerName: "Publisher", method: FormMethod.Get))
         {
-            <button style="margin: auto 0; position: absolute; right: 0; top: 0; bottom: 0" class="btn btn-primary col-lg-1" type="submit">Lista Edituri</button>
+            <button style="margin: auto 0; position: absolute; right: 0; top: 0; bottom: 0" class="btn btn-primary col-lg-1" type="submit">Publisher List</button>
         }
     </div>
 }
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+<div style="padding-top: 30px; position: absolute; left: 150px;">
+    <img src="/Content/images/back.png" />
+    @Html.ActionLink("Back to publishers list", "Index", "Publisher")
+</div>  
+
+<br />
+<h2>@ViewBag.Title</h2>
+<br />
+<br />
 
 @using (Html.BeginForm("New", "Publisher", FormMethod.Post))
 {
@@ -42,7 +53,13 @@
     @Html.TextBoxFor(p => p.Email, null, new { placeholder = "Type in the publisher's name", @class = "form-control" })
     @Html.ValidationMessageFor(p => p.Email, "", new { @class = "text-danger" })
     <br />
+    <br/>
+    
+    <button class="btn btn-primary col-lg-1" type="submit" style="margin-left: 90px">Add</button>
 
-    <button class="btn btn-primary" type="submit">Add</button>
+    <div style="position: absolute; bottom: -300px; right: 330px;">
+        <img src="~/Content/images/finger-print.png" style="height: 300px; " />
+        <p class="lead" style="position: relative; left: 200px; font-weight: bold;">Share your thoughts!</p>
+    </div>
 }
 

@@ -3,28 +3,52 @@
     ViewBag.Title = Model.Name;
 }
 
-<h2>@ViewBag.Title Publisher</h2>
+<br />
 
-@if (Model.Contact != null)
-{
-    @Html.Label("Phone number", "Phone number:")
+<div style="padding-top: 30px; position: absolute; left: 150px;">
+    <img src="/Content/images/back.png" />
+    @Html.ActionLink("Back to publishers list", "Index", "Publisher")
+</div>
+
+<br />
+
+<h1>@ViewBag.Title <small>Publisher</small></h1>
+<br />
+<br />
+
+<div style="position: relative">
+    @if (Model.Contact != null)
+    {
+        @Html.Label("Phone number", "Phone number:")
+        <br />
+        <p>@Model.Contact.PhoneNumber</p>
+
+        @Html.Label("Email", "Email:")
+        <br />
+        <p>@Model.Contact.Email</p>
+    }
+    else
+    {
+        <h2>No contact information available yet.</h2>
+    }
     <br />
-    <p>@Model.Contact.PhoneNumber</p>
 
-    @Html.Label("Email", "Email:")
-    <br />
-    <p>@Model.Contact.Email</p>
-}
+    @using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
+        new { id = Model.PublisherId }))
+    {
+        <input style="height: 40px; width: 40px; position: absolute; top: -90px; right: 40px;" type="image" src="~/Content/images/edit.png" />
+    }
 
-@using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
-    new { id = Model.PublisherId }))
-{
-    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
-}
+    @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
+        new { id = Model.PublisherId }))
+    {
+        @Html.HttpMethodOverride(HttpVerbs.Delete)
+        <input style="height: 40px; width: 40px; position: absolute; top: -90px; right: 0;" type="image" src="~/Content/images/remove.png" />
+    }
+    
+    <div style="position: absolute; bottom: -400px; right: 130px;">
+        <img src="~/Content/images/finger-print.png" style="height: 300px; " />
+        <p class="lead" style="position: relative; left: 200px; font-weight: bold;">Share your thoughts!</p>
+    </div>
+</div>
 
-@using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
-    new { id = Model.PublisherId }))
-{
-    @Html.HttpMethodOverride(HttpVerbs.Delete)
-    <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
-}

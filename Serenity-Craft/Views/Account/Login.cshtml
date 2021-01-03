@@ -4,7 +4,10 @@
     ViewBag.Title = "Log in";
 }
 
+<br />
+<br />
 <h2>@ViewBag.Title.</h2>
+<br />
 <div class="row">
     <div class="col-md-8">
         <section id="loginForm">
@@ -44,17 +47,13 @@
                 <p>
                     @Html.ActionLink("Register as a new user", "Register")
                 </p>
-                @* Enable this once you have account confirmation enabled for password reset functionality
-                    <p>
-                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                    </p>*@
+
             }
         </section>
     </div>
     <div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-        </section>
+        <img src="~/Content/images/finger-print.png" style="height: 300px; " />
+        <p class="lead" style="position: relative; left: 200px; font-weight: bold;">Share your thoughts!</p>
     </div>
 </div>
 

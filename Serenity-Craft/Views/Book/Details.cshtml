@@ -1,88 +1,223 @@
-﻿@model Serenity_Craft.Models.Book
+﻿@using Microsoft.AspNet.Identity
+@model Serenity_Craft.Models.Book
 
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = Model.Title + " | " + Model.Author;
 }
 
-<h2>@ViewBag.Title</h2>
+<div style="padding-top: 30px; position: absolute; left: 150px;">
+    <img src="/Content/images/back.png" />
+    @Html.ActionLink("Back to books list", "Index", "Book")
+</div>
 
-@Html.Label("Title", "Title:")
-<br />
-<p>@Model.Title</p>
+<div class="row" style="padding-top: 30px;">
+    <div style="text-align: center" class="col-xs-6">
+        <img class="book-img" src="@Model.ImagePath" alt="book's image" style="height: 600px;">
+        @{
+            double rating = 0;
 
-@Html.Label("Author", "Author:")
-<br />
-<p>@Model.Author</p>
+            if (Model.Reviews.Count != 0)
+            {
+                int sum = 0;
 
-@Html.Label("Number of pages", "Number of pages:")
-<br />
-<p>@Model.Pages</p>
+                foreach (var review in Model.Reviews)
+                {
+                    sum += review.Note;
+                }
 
-@Html.Label("Price", "Price:")
-<br />
-<p>@Model.Price</p>
+                rating = sum / Model.Reviews.Count;
+            }
 
-@if (Model.Publisher != null)
+            switch (rating)
+            {
+                case 0:
+                    <text>
+                        <h4 style="margin: 20px;">☆☆☆☆☆ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+                case 1:
+                    <text>
+                        <h4 style="margin: 20px;">⭐☆☆☆☆ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+                case 2:
+                    <text>
+                        <h4 style="margin: 20px;">⭐⭐☆☆☆ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+                case 3:
+                    <text>
+                        <h4 style="margin: 20px;">⭐⭐⭐☆☆ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+                case 4:
+                    <text>
+                        <h4 style="margin: 20px;">⭐⭐⭐⭐☆ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+                case 5:
+                    <text>
+                        <h4 style="margin: 20px;">⭐⭐⭐⭐⭐ (@Model.Reviews.Count)</h4>
+                    </text>
+                    break;
+            }
+        }
+    </div>
+    <div class="col-xs-6">
+        <div class="row">
+            <h3 class="col-xs-6">@Model.Title</h3>
+            <div class="col-xs-6">
+                @if (User.IsInRole("Admin"))
+                {
+                    using (Html.BeginForm(actionName: "Edit", controllerName: "Book", method: FormMethod.Get, routeValues:
+                        new { id = Model.BookId }))
+                    {
+                        <input style="height: 40px; width: 40px; position: absolute; right: 35%; top: 20px;" type="image" src="~/Content/images/edit.png" />
+                    }
+
+                    using (Html.BeginForm(actionName: "Delete", controllerName: "Book", method: FormMethod.Post, routeValues:
+                        new { id = Model.BookId }))
+                    {
+                        @Html.HttpMethodOverride(HttpVerbs.Delete)
+                        <input style="height: 40px; width: 40px; position: absolute; right: 20%; top:20px;" type="image" src="~/Content/images/remove.png" />
+                    }
+                }
+            </div>
+        </div>
+        <h3><small>@Model.Author</small></h3>
+
+        <br />
+        <h4>DETAILS:</h4>
+        @if (Model.Publisher != null)
+        {
+            <div class="row">
+                <h4 class="col-xs-6">Publisher: <small>@Model.Publisher.Name</small></h4>
+                @Html.ActionLink("Contact Info", "Details", "Publisher", new { id = Model.PublisherId }, new { @class = "col-xs-6 btn" })
+            </div>
+        }
+        <h4>Number of pages: <small>@Model.Pages</small></h4>
+        @if (Model.BookType != null)
+        {
+            <h4>Book type: <small>@Model.BookType.Name</small></h4>
+        }
+
+        @if (Model.Genres.Count > 0)
+        {
+            <h4>Genres: </h4>
+            <ul>
+                @foreach (var genre in Model.Genres)
+                {
+                    <li>@genre.Name</li>
+                }
+            </ul>
+        }
+
+        <br />
+        <h2 style="color: red;">@Model.Price RON</h2>
+        <br />
+
+        @if (Model.Summary.IsEmpty())
+        {
+            <h4><small>This book has no summary.</small></h4>
+        }
+        else
+        {
+            <h4>Book type: </h4>
+            <br />
+            <h4><small>@Html.DisplayFor(b => b.Summary)</small></h4>
+        }
+    </div>
+</div>
+
+@if (User.Identity.IsAuthenticated)
 {
-    @Html.Label("Publisher", "Publisher:")
-    <br />
-    <p>@Model.Publisher.Name</p>
-
-    using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
-        routeValues: new { id = Model.Publisher.PublisherId }))
-    {
-        <button class="btn btn-primary">Details</button>
-    }
+    @Html.ActionLink("ADD REVIEW", "New", "Review", new {id = Model.BookId}, new {style= "color: #DB324D; font-size: 1.5rem; font-weight: bold;" })
 }
 
-@if (Model.BookType != null)
-{
-    @Html.Label("Book Type", "Book Type:")
-    <br />
-    <p>@Model.BookType.Name</p>
-}
-
-<div class="panel-body">
-    @if (Model.Summary.IsEmpty())
+<div class="row">
+    @if (Model.Reviews.Count == 0)
     {
-        <p>This book has no summary...</p>
+        <div class="col-lg-12">
+            <h2 style="text-align: center"><small>No reviews yet.</small></h2>
+        </div>
     }
     else
     {
-        @Html.Label("Summary", "Summary:")
-        <br />
-        @Html.DisplayFor(b => b.Summary)
+        <div class="col-lg-12">
+            <h2 style="text-align: center"><small>Reviews</small></h2>
+        </div>
+        foreach (var review in Model.Reviews)
+        {
+            <div style="position: relative; padding-bottom: 30px;" class="row">
+                <div class="col-md-10">
+                    <h4>@review.UserName</h4>
+                    <h6><small>@review.ReviewDate</small></h6>
+                </div>
+                <div class="col-md-2">
+                    @{
+                        switch (review.Note)
+                        {
+                            case 0:
+                                <text>
+                                    <h5 style="margin: 20px;">☆☆☆☆☆ (@review.Note)</h5>
+                                </text>
+                                break;
+                            case 1:
+                                <text>
+                                    <h5 style="margin: 20px;">⭐☆☆☆☆ (@review.Note)</h5>
+                                </text>
+                                break;
+                            case 2:
+                                <text>
+                                    <h5 style="margin: 20px;">⭐⭐☆☆☆ (@review.Note)</h5>
+                                </text>
+                                break;
+                            case 3:
+                                <text>
+                                    <h5 style="margin: 20px;">⭐⭐⭐☆☆ (@review.Note)</h5>
+                                </text>
+                                break;
+                            case 4:
+                                <text>
+                                    <h5 style="margin: 20px;">⭐⭐⭐⭐☆ (@review.Note)</h5>
+                                </text>
+                                break;
+                            case 5:
+                                <text>
+                                    <h5 style="margin: 20px;">⭐⭐⭐⭐⭐ (@review.Note)</h5>
+                                </text>
+                                break;
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <br />
+                <div class="col-md-12">
+                    <h5 style="font-style:italic">@review.Text</h5>
+                </div>
+            </div>
+            if (@User.Identity.GetUserName() == review.UserName)
+            {
+                <div class="row">
+                    @using (Html.BeginForm(actionName: "Edit", controllerName: "Review", method: FormMethod.Get, routeValues:
+                        new { id = review.ReviewId }))
+                    {
+                        <input style="height: 40px; width: 40px; position: relative;" type="image" src="~/Content/images/edit.png" />
+                    }
+
+                    @using (Html.BeginForm(actionName: "Delete", controllerName: "Review", method: FormMethod.Post, routeValues:
+                        new { id = review.ReviewId }))
+                    {
+                        @Html.HttpMethodOverride(HttpVerbs.Delete)
+                        <input style="height: 40px; width: 40px; position: relative; top: -45px; left: 45px;" type="image" src="~/Content/images/remove.png" />
+                    }
+                </div>
+            }
+
+            <hr />
+        }
     }
 </div>
-@if (Model.Genres.Count > 0)
-{
-    @Html.Label("Genres", "Genres:")
-    <br />
-    <ul>
-        @foreach (var genre in Model.Genres)
-        {
-            <li>@genre.Name</li>
-        }
-    </ul>
-}
-
-@using (Html.BeginForm(actionName: "New", controllerName: "Review", method: FormMethod.Get, routeValues:
-    new { id = Model.BookId }))
-{
-    <button style="margin-right:5px" class="btn btn-secundary col-lg-1" type="submit">Add review</button>
-}
-
-@using (Html.BeginForm(actionName: "Edit", controllerName: "Book", method: FormMethod.Get, routeValues:
-    new { id = Model.BookId }))
-{
-    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
-}
-
-@using (Html.BeginForm(actionName: "Delete", controllerName: "Book", method: FormMethod.Post, routeValues:
-    new { id = Model.BookId }))
-{
-    @Html.HttpMethodOverride(HttpVerbs.Delete)
-    <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
-}
 
 

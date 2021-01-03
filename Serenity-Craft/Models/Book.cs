@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Web;
 using System.Web.Mvc;
 using Serenity_Craft.Models;
 
@@ -28,20 +29,15 @@ namespace Serenity_Craft.Models
         [MaxLength(600, ErrorMessage = "Summary way too long, try to make it shorter!")]
         public string Summary { get; set; }
 
-        //[Required]
-        //public string ImagePath { get; set; }
+        //[Required(ErrorMessage = "You must upload the book's image!")]
+        public string ImagePath { get; set; }
+
+        [NotMapped]
+        public HttpPostedFileBase ImageFile { get; set; }
 
         [Required,
          RegularExpression(@"\d+(?:\.\d+)?")]
         public double Price { get; set; }
-
-
-        private double _bookRating;
-        public double BookRating
-        {
-            get => _bookRating;
-            set => value = CalculateBookRating();
-        }
 
         // dropdown lists
 
@@ -75,23 +71,5 @@ namespace Serenity_Craft.Models
 
         // many-to-many relationship
         public virtual ICollection<Genre> Genres { get; set; }
-
-
-        private double CalculateBookRating()
-        {
-            double rating = 0;
-
-            if (Reviews == null || Reviews.Count == 0) return rating;
-
-            int sum = 0;
-
-            foreach (var review in Reviews)
-            {
-                sum += review.Note;
-            }
-            rating = sum / Reviews.Count;
-
-            return rating;
-        }
     }
 }

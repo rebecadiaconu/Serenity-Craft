@@ -1,58 +1,65 @@
 ﻿@{
-    ViewBag.Title = "My reviews";
+    ViewBag.Title = "Reviews";
 }
 
+<br/>
 <h2>@ViewBag.Title</h2>
+<br/>
 
-@if (ViewBag.Reviews.Count == 0)
+@if (ViewBag.Reviews == null)
 {
     <p>You haven't done any reviews yet!</p>
 }
 else
 {
-    foreach (var review in ViewBag.Reviews)
-    {
-        @Html.Label("Title", "Book's title:")
-        <br />
-        <p>@review.Book.Title</p>
-        <br />
-        <br />
 
-        @Html.Label("Author", "Book's author:")
-        <br />
-        <p>@review.Book.Author</p>
-        <br />
-        <br />
-
-        using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
-            routeValues: new { id = review.BookId }))
+    <br/>
+    <br/>
+    <table class="table table-hover table-responsive table-condense" style="width: 100%">
+        <thead>
+        <tr>
+            <th scope="col" class="col-md-4"><h4>Book</h4></th>
+            <th scope="col" class="col-md-4"><h4>User</h4></th>
+            <th scope="col" class="col-md-4"><h4>More</h4></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var review in ViewBag.Reviews)
         {
-            <button class="btn btn-primary">Details</button>
+            <tr>
+                <th scope="row">@review.Book.Title - @review.Book.Author</th>
+                <th scope="row">@review.UserName</th>
+                <td>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Details", controllerName: "Review", method: FormMethod.Get, routeValues:
+                                new { id = review.ReviewId }))
+                            {
+                                <button style="margin-right: 5px" class="btn btn-info" type="submit">Details</button>
+                            }
+                        </div>
+                        @*<div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Edit", controllerName: "Review", method: FormMethod.Get, routeValues:
+                                new {id = review.ReviewId}))
+                            {
+                                <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
+                            }
+                        </div>*@
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Delete", controllerName: "Review", method: FormMethod.Post, routeValues:
+                                new {id = review.ReviewId}))
+                            {
+                                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            }
+                        </div>
+
+                    </div>
+                    <br />
+                </td>
+            </tr>
         }
-
-        @Html.Label("UserName", "Username:")
-        <br />
-        <p>@review.UserName</p>
-        <br />
-        <br />
-
-        @Html.Label("Text", "Review:")
-        <br />
-        <p>@review.Text</p>
-        <br />
-        <br />
-
-        @Html.Label("Note", "Book's rating:")
-        <br />
-        <p>@review.Note</p>
-        <br />
-        <br />
-
-        @Html.Label("ReviewDate", "review's date:")
-        <br />
-        <p>@review.ReviewDate</p>
-        <br />
-        <br />
-
-    }
+        </tbody>
+    </table>
+    <br/>
 }

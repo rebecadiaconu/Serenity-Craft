@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
@@ -7,25 +8,42 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
+    [Authorize]
     public class ReviewController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        
+
 
         // READ
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            var userId = User.Identity.GetUserId();
-            ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
-
-            ViewBag.Reviews = db.Reviews.FirstOrDefault(p => p.UserName.Equals(user.UserName));
+            var reviews =  db.Reviews.Include("Book").OrderBy(r => r.UserName);
+            ViewBag.Reviews = reviews.ToList();
 
             return View();
         }
 
-        // CREATE
         [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            if (id.HasValue)
+            {
+                Review review = db.Reviews.Find(id);
+                if (review != null)
+                {
+                    return View(review);
+                }
+
+                return HttpNotFound("Couldn't find the review you are searching for...");
+            }
+
+            return HttpNotFound("Parameter is missing...");
+        }
+
+            // CREATE
+        [HttpGet]
+        [Authorize(Roles = "Admin, User")]
         public ActionResult New(int? id)
         {
             if (id.HasValue)
@@ -46,6 +64,7 @@ namespace Serenity_Craft.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, User")]
         public ActionResult New(int id, Review reviewReq)
         {
             var userId = User.Identity.GetUserId();
@@ -55,45 +74,136 @@ namespace Serenity_Craft.Controllers
 
             try
             {
-                Book book = db.Books.Find(id);
-                reviewReq.BookId = id;
-                reviewReq.Book = book;
-                reviewReq.UserName = user.Email;
-
                 if (ModelState.IsValid)
                 {
+                    Book book = db.Books.Find(id);
+                    reviewReq.BookId = id;
+                    reviewReq.Book = book;
+                    reviewReq.UserName = user?.Email;
+
                     if (NotExists(book, reviewReq.UserName) == 1)
                     {
                         book.Reviews.Add(reviewReq);
                         db.Reviews.Add(reviewReq);
+
+                        db.SaveChanges();
+
+                        return RedirectToAction("Details", "Book", new {id = id});
                     }
 
-                    ViewBag.Message = "Deja ai o recenzie data despre aceasta carte. Doresti sa o modifci? Check `My Reviews.`";
+                    ViewBag.Message = "You already write a review about this book. Perhaps you want to change it.";
                     return View(reviewReq);
                 }
 
-                var errors = ModelState.Select(x => x.Value.Errors)
-                    .Where(y => y.Count > 0)
-                    .ToList();
-                Console.WriteLine(errors);
-
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(reviewReq);
             }
             catch (Exception)
             {
-                ViewBag.Message = "Something went wrong. Please try again!";
+                ViewBag.Message = "Something went wrong... Please try again!";
                 return View(reviewReq);
             }
         }
 
+        // UPDATE
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult Edit(int? id)
+        {
+
+            if (id.HasValue)
+            {
+                Review review = db.Reviews.Find(id);
+
+                if (review != null)
+                {
+                    ViewBag.Notes = GetAllNotes();
+
+                    return View(review);
+                }
+
+                return HttpNotFound("Couldn't find the review type you are searching for...");
+            }
+
+            return HttpNotFound("Parameter is missing...");
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult Edit(int id, Review reviewReq)
+        {
+            try
+            {
+                reviewReq.ReviewDate = DateTime.Now;
+                ViewBag.Notes = GetAllNotes();
+
+                if (ModelState.IsValid)
+                {
+                    Review review = db.Reviews.Find(id);
+
+                    if (TryUpdateModel(review))
+                    {
+                        review.Text = reviewReq.Text;
+                        review.Note = reviewReq.Note;
+                        review.ReviewDate = reviewReq.ReviewDate;
+
+                        db.SaveChanges();
+                    }
+
+                    return RedirectToAction("Details", "Review", new {id = review.ReviewId});
+                }
+
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
+                return View(reviewReq);
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Something went wrong... Please try again!";
+                return View(reviewReq);
+            }
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult Delete(int id)
+        {
+            Review review = db.Reviews.Find(id);
+            if (review != null)
+            {
+                Book book = db.Books.Find(review.BookId);
+
+                if (book != null)
+                {
+                    book.Reviews.Remove(review);
+                    db.Reviews.Remove(review);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Details", "Book", new {id = book.BookId});
+                }
+            }
+
+            return HttpNotFound("Couldn't find the review type you are searching for...");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, User")]
+        public ActionResult MyReviews()
+        {
+            var userId = User.Identity.GetUserId();
+            ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
+
+            var reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(r => r.Book.Title);
+
+            ViewBag.Reviews = reviews.ToList();
+
+            return View();
+        }
 
         [NonAction]
         public int NotExists(Book book, string userName)
         {
             List<Review> reviews = book.Reviews.ToList();
 
-            if (reviews != null)
+            if (reviews.Count != 0)
             {
                 foreach (var review in reviews)
                 {

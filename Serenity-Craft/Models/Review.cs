@@ -5,6 +5,11 @@ namespace Serenity_Craft.Models
 {
     public class Review
     {
+        public Review()
+        {
+            ReviewDate = DateTime.Now;
+        }
+
         [Key]
         public int ReviewId { get; set; }
 
@@ -18,7 +23,6 @@ namespace Serenity_Craft.Models
         [Required]
         public int Note { get; set; }
 
-        [Required]
         public string UserName { get; set; }
 
         // many-to-one relationship

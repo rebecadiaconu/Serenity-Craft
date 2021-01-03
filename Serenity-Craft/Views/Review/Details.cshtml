@@ -1,0 +1,106 @@
+﻿@using System.Web.UI.WebControls
+@using Microsoft.AspNet.Identity
+@using Serenity_Craft.Models
+@model Serenity_Craft.Models.Review
+@{
+    ViewBag.Title = "Review details";
+}
+
+<div style="padding-top: 30px; position: absolute; left: 150px;">
+    <img src="/Content/images/back.png" />
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Back to reviews list", "Index", "Review")
+    }
+</div>
+
+<br/>
+<h2>@ViewBag.Title</h2>
+<br />
+<hr/>
+
+<h3 style="color: #DB324D; font-weight: bold">@Model.Book.Title | @Model.Book.Author</h3>
+<br>
+
+<div style="position: relative; padding-bottom: 30px;" class="row">
+    <div style="position: relative;" class="col-md-10">
+        <h4>@Model.UserName</h4>
+        <h6><small>@Model.ReviewDate</small></h6>
+    </div>
+    <div class="col-md-2">
+        @{
+            switch (Model.Note)
+            {
+                case 0:
+                    <text>
+                        <h5 style="margin: 20px;">☆☆☆☆☆ (@Model.Note)</h5>
+                    </text>
+                    break;
+                case 1:
+                    <text>
+                        <h5 style="margin: 20px;">⭐☆☆☆☆ (@Model.Note)</h5>
+                    </text>
+                    break;
+                case 2:
+                    <text>
+                        <h5 style="margin: 20px;">⭐⭐☆☆☆ (@Model.Note)</h5>
+                    </text>
+                    break;
+                case 3:
+                    <text>
+                        <h5 style="margin: 20px;">⭐⭐⭐☆☆ (@Model.Note)</h5>
+                    </text>
+                    break;
+                case 4:
+                    <text>
+                        <h5 style="margin: 20px;">⭐⭐⭐⭐☆ (@Model.Note)</h5>
+                    </text>
+                    break;
+                case 5:
+                    <text>
+                        <h5 style="margin: 20px;">⭐⭐⭐⭐⭐ (@Model.Note)</h5>
+                    </text>
+                    break;
+            }
+        }
+    </div>
+</div>
+<div class="row">
+    <br />
+    <div class="col-md-12">
+        <h5 style="font-style:italic">@Model.Text</h5>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-md-4">
+        @if (@User.Identity.GetUserName() == Model.UserName)
+        {
+            <div class="col-md-2">
+                @using (Html.BeginForm(actionName: "Edit", controllerName: "Review", method: FormMethod.Get, routeValues: new {id = Model.ReviewId}))
+                {
+                    <input style="height: 40px; width: 40px; position: relative;" type="image" src="~/Content/images/edit.png"/>
+                }
+            </div>
+        }
+        <div class="col-md-2">
+            @using (Html.BeginForm(actionName: "Delete", controllerName: "Review", method: FormMethod.Post, routeValues:
+                new {id = Model.ReviewId}))
+            {
+                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                <input style="height: 40px; width: 40px;" type="image" src="~/Content/images/remove.png"/>
+            }
+        </div>
+        <div class="col-md-2">
+            @Html.ActionLink("Book Details", "Details", "Book", new {id = Model.BookId}, new {@style = "color: #DB324D;" })
+        </div>
+    </div>
+</div>
+
+<div style="position: absolute; bottom: -300px; right: 330px;">
+<img src="~/Content/images/finger-print.png" style="height: 300px; " />
+<p class="lead" style="position: relative; left: 200px; font-weight: bold;">Share your thoughts!</p>
+</div>
+

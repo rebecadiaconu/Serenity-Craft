@@ -6,6 +6,7 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BookTypeController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -14,8 +15,8 @@ namespace Serenity_Craft.Controllers
         public ActionResult Index(int? id)
         {
 
-            List<BookType> btypes = db.BookTypes.ToList();
-            ViewBag.BookTypes = btypes;
+            var btypes = db.BookTypes.OrderBy(bt =>bt.Name);
+            ViewBag.BookTypes = btypes.ToList();
 
             if (id.HasValue)
             {
@@ -56,16 +57,16 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Acest tip se afla deja in baza de date!";
+                    ViewBag.Message = "Book type with the same name already exists in our database!";
                     return View(typeReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(typeReq);
             }
             catch (Exception)
             {
-                ViewBag.Message = "Something went wrong. Please try again!";
+                ViewBag.Message = "Something went wrong... Please try again!";
                 return View(typeReq);
             }
         }
@@ -82,10 +83,10 @@ namespace Serenity_Craft.Controllers
                     return View(btype);
                 }
 
-                return HttpNotFound("Nu exista acest tip de carte!");
+                return HttpNotFound("Couldn't find the book type you are searching for...");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         [HttpPut]
@@ -97,7 +98,7 @@ namespace Serenity_Craft.Controllers
                 {
                     BookType searchBookType = db.BookTypes.SingleOrDefault(p => p.Name.Equals(typeReq.Name));
 
-                    if (searchBookType == null)
+                    if (searchBookType == null || searchBookType.BookTypeId == typeReq.BookTypeId)
                     {
                         BookType bookType = db.BookTypes.SingleOrDefault(bt => bt.BookTypeId.Equals(id));
 
@@ -110,11 +111,11 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Deja exista acest tip de carte!";
+                    ViewBag.Message = "Book type with the same name already exists in our database!";
                     return View(typeReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(typeReq);
             }
             catch (Exception)
@@ -141,7 +142,7 @@ namespace Serenity_Craft.Controllers
                 }
 
                 int noOfbooks = AllBooks(id);
-                
+
                 if (noOfbooks == 0)
                 {
                     db.BookTypes.Remove(bType);
@@ -150,10 +151,10 @@ namespace Serenity_Craft.Controllers
                     return RedirectToAction("Index");
                 }
 
-                return RedirectToAction("Index", new { id = id });
+                return RedirectToAction("Index", new {id = id});
             }
 
-            return HttpNotFound("Tipul de carte nu exista!");
+            return HttpNotFound("Couldn't find the book you are searching for...");
         }
 
         [NonAction]

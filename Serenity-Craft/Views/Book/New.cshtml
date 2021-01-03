@@ -3,75 +3,98 @@
     ViewBag.Title = "Add new book";
 }
 
+<div style="padding-top: 30px; position: absolute; left: 150px;">
+    <img src="/Content/images/back.png" />
+    @Html.ActionLink("Back to books list", "Index", "Book")
+</div>
+
+<br/>
 <h2>@ViewBag.Title</h2>
+<br/>
 
 @if (ViewBag.Message != null)
 {
     <div class="alert alert-danger ">@ViewBag.Message</div>
 }
 
-@using (Html.BeginForm("New", "Book", FormMethod.Post))
+@using (Html.BeginForm("New", "Book", FormMethod.Post, new
 {
-    @Html.Label("Title", "Book title:")
-    <br />
-    @Html.TextBoxFor(b => b.Title, null, new { placeholder = "Type in the book's title", @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.Title, "", new { @class = "text-danger" })
-    <br />
-    <br />
+    enctype = "multipart/form-data"
+}))
+{
+    <div class="row">
+        <div class="col-md-6">
+            @Html.Label("Title", "Book title:")
+            <br />
+            @Html.TextBoxFor(b => b.Title, null, new { placeholder = "Type in the book's title", @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.Title, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("Author", "Author name:")
-    <br />
-    @Html.TextBoxFor(b => b.Author, null, new { placeholder = "Type in the book's author", @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.Author, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.Label("Author", "Author name:")
+            <br />
+            @Html.TextBoxFor(b => b.Author, null, new { placeholder = "Type in the book's author", @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.Author, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("Number of pages", "Number of pages:")
-    <br />
-    @Html.TextBoxFor(b => b.Pages, null, new { placeholder = "Type in the book's number of pages", @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.Pages, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.Label("Number of pages", "Number of pages:")
+            <br />
+            @Html.TextBoxFor(b => b.Pages, null, new { placeholder = "Type in the book's number of pages", @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.Pages, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("Price", "Price:")
-    <br />
-    @Html.TextBoxFor(b => b.Price, null, new { placeholder = "Type in the book's price", @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.Price, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.Label("Price", "Price:")
+            <br />
+            @Html.TextBoxFor(b => b.Price, null, new { placeholder = "Type in the book's price", @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.Price, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("Summary", "Summary:")
-    <br />
-    @Html.TextArea("Summary", null, new { placeholder = "Type in the book's summary", @class = "form-control", @rows = "10" })
-    @Html.ValidationMessageFor(b => b.Summary, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.Label("Summary", "Summary:")
+            <br />
+            @Html.TextArea("Summary", null, new { placeholder = "Type in the book's summary", @class = "form-control", @rows = "10" })
+            @Html.ValidationMessageFor(b => b.Summary, "", new { @class = "text-danger" })
+            <br />
+            <br />
+        </div>
+        <div class="col-md-6">
+            @Html.Label("BookType", "BookType:")
+            <br />
+            @Html.DropDownListFor(b => b.BookTypeId, new SelectList(Model.BookTypesList, "Value", "Text"), "Choose a book type", new { @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.BookTypeId, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("BookType", "BookType:")
-    <br />
-    @Html.DropDownListFor(b => b.BookTypeId, new SelectList(Model.BookTypesList, "Value", "Text"), "Choose a book type", new { @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.BookTypeId, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.Label("Publisher", "Publisher:")
+            <br />
+            @Html.DropDownListFor(b => b.PublisherId, new SelectList(Model.PublishersList, "Value", "Text"), "Choose a publisher", new { @class = "form-control" })
+            @Html.ValidationMessageFor(b => b.PublisherId, "", new { @class = "text-danger" })
+            <br />
+            <br />
 
-    @Html.Label("Publisher", "Publisher:")
-    <br />
-    @Html.DropDownListFor(b => b.PublisherId, new SelectList(Model.PublishersList, "Value", "Text"), "Choose a publisher", new { @class = "form-control" })
-    @Html.ValidationMessageFor(b => b.PublisherId, "", new { @class = "text-danger" })
-    <br />
-    <br />
+            @Html.LabelFor(b => b.GenresList, "Choose genres:")
+            <br />
+            @for (int i = 0; i < Model.GenresList.Count(); i++)
+            {
+                @Html.HiddenFor(b => b.GenresList[i].Id)
+                @Html.HiddenFor(b => b.GenresList[i].Name)
+                @Html.CheckBoxFor(b => b.GenresList[i].Checked)
+                @Html.DisplayFor(b => b.GenresList[i].Name)
+                <br />
+            }
+        </div>
+        <div class="col-lg-12">
+            @Html.LabelFor(b => b.ImagePath, "Book's image:")
+            <input type="file" name="ImageFile" required />
+            <br />
+            @Html.ValidationMessageFor(b => b.ImagePath, "", new { @class = "text-danger" })
+            <br />
+            <br />
+        </div>
+    </div>
 
-    @Html.LabelFor(b => b.GenresList, "Choose genres:")
-    <br />
-    for (int i = 0; i < Model.GenresList.Count(); i++)
-    {
-        @Html.HiddenFor(b => b.GenresList[i].Id)
-        @Html.HiddenFor(b => b.GenresList[i].Name)
-        @Html.CheckBoxFor(b => b.GenresList[i].Checked)
-        @Html.DisplayFor(b => b.GenresList[i].Name)
-        <br />
-    }
-
-    <button class="btn btn-primary" type="submit">Add</button>
+    <button class="btn btn-primary " type="submit">Add</button>
 }
 

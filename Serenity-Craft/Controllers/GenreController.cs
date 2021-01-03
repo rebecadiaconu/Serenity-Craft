@@ -7,6 +7,7 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class GenreController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -14,8 +15,8 @@ namespace Serenity_Craft.Controllers
         // READ
         public ActionResult Index(int? id)
         {
-            List<Genre> genres = db.Genres.ToList();
-            ViewBag.Genres = genres;
+            var genres = db.Genres.OrderBy(g=>g.Name);
+            ViewBag.Genres = genres.ToList();
 
             if (id.HasValue)
             {
@@ -48,7 +49,7 @@ namespace Serenity_Craft.Controllers
                 {
                     Genre searchGenre = db.Genres.SingleOrDefault(p => p.Name.Equals(genreReq.Name));
 
-                    if (searchGenre == null)
+                    if (searchGenre == null || searchGenre.GenreId == genreReq.GenreId)
                     {
                         db.Genres.Add(genreReq);
                         db.SaveChanges();
@@ -56,16 +57,16 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Acest gen de carte se afla deja in baza de date!";
+                    ViewBag.Message = "Genre with the same name already exists in our database!";
                     return View(genreReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(genreReq);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                ViewBag.Message = "Something went wrong. Please try again!";
+                ViewBag.Message = "Something went wrong... Please try again!";
                 return View(genreReq);
             }
         }
@@ -82,10 +83,10 @@ namespace Serenity_Craft.Controllers
                     return View(genre);
                 }
 
-                return HttpNotFound("Nu exista acest gen de carte!");
+                return HttpNotFound("Couldn't find the genre you are searching for...");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         [HttpPut]
@@ -110,11 +111,11 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Deja exista acest gen de carte!";
+                    ViewBag.Message = "Genre with the same name already exists in our database!";
                     return View(genreReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(genreReq);
             }
             catch (Exception)
@@ -159,7 +160,7 @@ namespace Serenity_Craft.Controllers
                 return RedirectToAction("Index", new { id = id });
             }
 
-            return HttpNotFound("Genul de carte nu exista!");
+            return HttpNotFound("Couldn't find the genre you are searching for...");
         }
 
         [NonAction]

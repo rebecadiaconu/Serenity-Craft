@@ -30,66 +30,11 @@ namespace Serenity_Craft.Migrations
                 new BookType {Name = "Newspaper"},
                 new BookType {Name = "Novel"},
                 new BookType {Name = "Poetry"},
-                new BookType {Name = "Short story"},
                 new BookType {Name = "Theatre/Sketch"}
             };
-            try
-            {
-                bookTypes.ForEach(bt => context.BookTypes.AddOrUpdate(p => p.Name, bt));
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
+            bookTypes.ForEach(bt => context.BookTypes.AddOrUpdate(p => p.Name, bt));
+            context.SaveChanges();
 
-            var contacts = new List<Contact>
-            {
-                new Contact
-                {
-                    PhoneNumber = "0234567801",
-                    Email = "wiley@gmail.com"
-                },
-                new Contact
-                {
-                    PhoneNumber = "0756444200",
-                    Email = "hlivre@gmail.com"
-                },
-                new Contact
-                {
-                    PhoneNumber = "0780266113",
-                    Email = "collins_harper@yahoo.com"
-                }
-            };
-            try
-            {
-                contacts.ForEach(c => context.Contacts.AddOrUpdate(p => p.PublisherId, c));
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
 
             var publishers = new List<Publisher>
             {
@@ -97,25 +42,35 @@ namespace Serenity_Craft.Migrations
                 new Publisher {Name = "Herper Collins"},
                 new Publisher {Name = "Wiley"}
             };
-            try
+            publishers.ForEach(pb => context.Publishers.AddOrUpdate(p => p.Name, pb));
+            context.SaveChanges();
+
+            var contacts = new List<Contact>
             {
-                publishers.ForEach(pb => context.Publishers.AddOrUpdate(p => p.Name, pb));
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
+                new Contact
                 {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
+                    PublisherId = publishers.Single(i =>i.Name == "Hachette Livre").PublisherId,
+                    Publisher = publishers.Single(i =>i.Name == "Hachette Livre"),
+                    PhoneNumber = "0234567801",
+                    Email = "wiley@gmail.com"
+                },
+                new Contact
+                {
+                    PublisherId = publishers.Single(i =>i.Name == "Herper Collins").PublisherId,
+                    Publisher = publishers.Single(i =>i.Name == "Herper Collins"),
+                    PhoneNumber = "0756444200",
+                    Email = "hlivre@gmail.com"
+                },
+                new Contact
+                {
+                    PublisherId = publishers.Single(i =>i.Name == "Wiley").PublisherId,
+                    Publisher = publishers.Single(i =>i.Name == "Wiley"),
+                    PhoneNumber = "0780266113",
+                    Email = "collins_harper@yahoo.com"
                 }
-                throw;
-            }
+            };
+            contacts.ForEach(c => context.Contacts.AddOrUpdate(p => p.PublisherId, c));
+            context.SaveChanges();
 
             var genres = new List<Genre>
             {
@@ -139,25 +94,10 @@ namespace Serenity_Craft.Migrations
                 new Genre {Name = "Thriller"},
                 new Genre {Name = "Travel"}
             };
-            try
-            {
-                genres.ForEach(g => context.Genres.AddOrUpdate(p => p.Name, g));
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
+            
+            genres.ForEach(g => context.Genres.AddOrUpdate(p => p.Name, g));
+            context.SaveChanges();
+
 
             var books = new List<Book>
             {
@@ -167,8 +107,8 @@ namespace Serenity_Craft.Migrations
                     Author = "Dan Brown",
                     Pages = 724,
                     Summary = "",
+                    ImagePath = "/Content/books/harry1.jpg",
                     Price = 46,
-                    BookRating = 0,
                     PublisherId = publishers.Single(p => p.Name == "Wiley").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
                     Genres = new List<Genre>(),
@@ -181,8 +121,8 @@ namespace Serenity_Craft.Migrations
                     Author = "Shakespeare",
                     Pages = 375,
                     Summary = "",
+                    ImagePath = "/Content/books/harry2.jpg",
                     Price = 50,
-                    BookRating = 0,
                     PublisherId = publishers.Single(p => p.Name == "Herper Collins").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
                     Genres = new List<Genre>(),
@@ -190,64 +130,32 @@ namespace Serenity_Craft.Migrations
                 },
                 new Book
                 {
-                    Title = "The Canterbury Tales",
+                    Title = "Test1",
                     Author = "Geoffrey Chaucer",
                     Pages = 602,
                     Summary = "",
+                    ImagePath = "/Content/books/harry3.jpg",
                     Price = 30,
-                    BookRating = 0,
                     PublisherId = publishers.Single(p => p.Name == "Hachette Livre").PublisherId,
                     BookTypeId = bookTypes.Single(bt => bt.Name == "Novel").BookTypeId,
                     Genres = new List<Genre>(),
                     Reviews = new List<Review>()
                 }
             };
-            try
-            {
-                books.ForEach(b => context.Books.AddOrUpdate(p => p.Title, b));
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
+            
+            books.ForEach(b => context.Books.AddOrUpdate(p => p.Title, b));
+            context.SaveChanges();
 
-            try
-            {
-                AddOrUpdateBook(context, "The Canterbury Tales", "Romance");
-                AddOrUpdateBook(context, "The Canterbury Tales", "Fantasy");
-                AddOrUpdateBook(context, "Hamlet", "Drama");
-                AddOrUpdateBook(context, "Hamlet", "Philosophy");
-                AddOrUpdateBook(context, "Origins", "Drama");
+            
+            AddOrUpdateBook(context, "Test1", "Romance");
+            AddOrUpdateBook(context, "Test1", "Fantasy");
+            AddOrUpdateBook(context, "Hamlet", "Drama");
+            AddOrUpdateBook(context, "Hamlet", "Philosophy");
+            AddOrUpdateBook(context, "Origins", "Drama");
 
-                context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
+            context.SaveChanges();
 
-            void AddOrUpdateBook(ApplicationDbContext ctx, string bookTitle, string genreName)
+                void AddOrUpdateBook(ApplicationDbContext ctx, string bookTitle, string genreName)
             {
                 var bk = ctx.Books.SingleOrDefault(b => b.Title == bookTitle);
                 var gens = bk.Genres.SingleOrDefault(g => g.Name == genreName);

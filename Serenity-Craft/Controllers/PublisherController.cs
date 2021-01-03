@@ -8,6 +8,7 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PublisherController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -16,8 +17,8 @@ namespace Serenity_Craft.Controllers
         [HttpGet]
         public ActionResult Index(int? id)
         {
-            List<Publisher> publishers = db.Publishers.Include("Contact").ToList();
-            ViewBag.publishers = publishers;
+            var publishers = db.Publishers.Include("Contact").OrderBy(p =>p.Name);
+            ViewBag.publishers = publishers.ToList();
 
             if (id.HasValue)
             {
@@ -42,10 +43,10 @@ namespace Serenity_Craft.Controllers
                     return View(pub);
                 }
 
-                return HttpNotFound("Editura nu exista!");
+                return HttpNotFound("Couldn't find the publisher you are searching for...");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         // CREATE
@@ -86,16 +87,16 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Editura se afla deja in baza de date! Poate doresti sa o modifici!";
+                    ViewBag.Message = "Publisher with the same name already exists in our database!";
                     return View(pubReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(pubReq);
             }
             catch (Exception)
             {
-                ViewBag.Message = "Something went wrong. Please try again!!";
+                ViewBag.Message = "Something went wrong... Please try again!";
                 return View(pubReq);
             }
         }
@@ -113,10 +114,10 @@ namespace Serenity_Craft.Controllers
                     return View(pub);
                 }
 
-                return HttpNotFound("Nu exista aceasta editura");
+                return HttpNotFound("Couldn't find the publisher you are searching for...");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         [HttpPut]
@@ -142,16 +143,16 @@ namespace Serenity_Craft.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Deja exista o editura cu caracteristici asemanatoare!";
+                    ViewBag.Message = "Publisher with the same name already exists in our database!";
                     return View(pubReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again";
                 return View(pubReq);
             }
             catch (Exception)
             {
-                ViewBag.Message = "Something went wrong. Please try again!";
+                ViewBag.Message = "Something went wrong... Please try again!";
                 return View(pubReq);
             }
         }
@@ -174,7 +175,11 @@ namespace Serenity_Craft.Controllers
                         }
                     }
 
-                    db.Contacts.Remove(publisher.Contact);
+                    if (publisher.Contact != null)
+                    {
+                        db.Contacts.Remove(publisher.Contact);
+                    }
+                    
                     db.Publishers.Remove(publisher);
                     db.SaveChanges();
 
@@ -183,7 +188,11 @@ namespace Serenity_Craft.Controllers
 
                 if (AllBooks(id) == 0)
                 {
-                    db.Contacts.Remove(publisher.Contact);
+                    if (publisher.Contact != null)
+                    {
+                        db.Contacts.Remove(publisher.Contact);
+                    }
+
                     db.Publishers.Remove(publisher);
                     db.SaveChanges();
 
@@ -193,7 +202,7 @@ namespace Serenity_Craft.Controllers
                 return RedirectToAction("Index", new { id = id });
             }
 
-            return HttpNotFound("Editura nu exista!");
+            return HttpNotFound("Couldn't find the publisher you are searching for...");
         }
 
 

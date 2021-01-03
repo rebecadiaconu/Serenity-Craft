@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,16 +9,18 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
+    [Authorize]
     public class BookController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // READ
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Index()
         {
-            List<Book> books = db.Books.Include("Publisher").Include("BookType").ToList();
-            ViewBag.Books = books;
+           var books = db.Books.Include("Publisher").Include("BookType").OrderBy(s => s.Title); ;
+            ViewBag.Books = books.ToList();
 
             return View();
         }
@@ -32,14 +36,15 @@ namespace Serenity_Craft.Controllers
                     return View(book);
                 }
 
-                return HttpNotFound("Cartea nu exista!");
+                return HttpNotFound("Couldn't find the book!");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         // CREATE
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult New()
         {
             Book book = new Book
@@ -56,10 +61,21 @@ namespace Serenity_Craft.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult New(Book bookReq)
         {
             try
             {
+                string fileName = Path.GetFileNameWithoutExtension(bookReq.ImageFile.FileName);
+
+                string fileExtension = Path.GetExtension(bookReq.ImageFile.FileName);
+
+                fileName = fileName.Trim() + fileExtension;
+
+                string uploadPath = "C:/Users/Asus/Desktop/DAW/Serenity-Craft/Serenity-Craft/Content/books/" + fileName;
+
+                bookReq.ImagePath = "/Content/books/" + fileName;
+
                 bookReq.Publisher = db.Publishers.FirstOrDefault(p => p.PublisherId.Equals(bookReq.PublisherId));
                 bookReq.BookType = db.BookTypes.FirstOrDefault(p => p.BookTypeId.Equals(bookReq.BookTypeId));
 
@@ -68,29 +84,34 @@ namespace Serenity_Craft.Controllers
 
                 var genreSelected = bookReq.GenresList.Where(b => b.Checked).ToList();
 
+                bookReq.Genres = new List<Genre>();
+                for (int i = 0; i < genreSelected.Count(); i++)
+                {
+                    Genre genre = db.Genres.Find(genreSelected[i].Id);
+                    bookReq.Genres.Add(genre);
+                }
+
                 if (ModelState.IsValid)
                 {
-
                     if (NotExists(bookReq) == -1)
                     {
-                        bookReq.Genres = new List<Genre>();
-                        for (int i = 0; i < genreSelected.Count(); i++)
-                        {
-                            Genre genre = db.Genres.Find(genreSelected[i].Id);
-                            bookReq.Genres.Add(genre);
-                        }
-
+                        bookReq.ImageFile.SaveAs(uploadPath);
                         db.Books.Add(bookReq);
                         db.SaveChanges();
 
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Cartea se afla deja in baza de date!";
+                    ViewBag.Message = "The book is already in our database!";
                     return View(bookReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                var errors = ModelState.Select(x => x.Value.Errors)
+                    .Where(y => y.Count > 0)
+                    .ToList();
+                Console.WriteLine(errors);
+
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again.";
                 return View(bookReq);
             }
             catch (Exception)
@@ -102,6 +123,7 @@ namespace Serenity_Craft.Controllers
 
         // UPDATE
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id.HasValue)
@@ -121,17 +143,33 @@ namespace Serenity_Craft.Controllers
                     return View(book);
                 }
 
-                return HttpNotFound("Nu exista aceasta carte");
+                return HttpNotFound("Couldn't find the book.");
             }
 
-            return HttpNotFound("Parametrul lipseste!");
+            return HttpNotFound("Parameter is missing...");
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id, Book bookReq)
         {
             try
             {
+                int uploaded = 0;
+
+                if (bookReq.ImageFile != null)
+                {
+                    uploaded = 1;
+
+                    string fileName = Path.GetFileNameWithoutExtension(bookReq.ImageFile.FileName);
+                    string fileExtension = Path.GetExtension(bookReq.ImageFile.FileName);
+                    fileName = fileName.Trim() + fileExtension;
+
+                    string uploadPath = "C:/Users/Asus/Desktop/DAW/Serenity-Craft/Serenity-Craft/Content/books/" + fileName;
+                    bookReq.ImagePath = "/Content/books/" + fileName;
+                    bookReq.ImageFile.SaveAs(uploadPath);
+                }
+
                 bookReq.Publisher = db.Publishers.FirstOrDefault(p => p.PublisherId.Equals(bookReq.PublisherId));
                 bookReq.BookType = db.BookTypes.FirstOrDefault(p => p.BookTypeId.Equals(bookReq.BookTypeId));
 
@@ -156,6 +194,11 @@ namespace Serenity_Craft.Controllers
                             book.Summary = bookReq.Summary;
                             book.Publisher = bookReq.Publisher;
                             book.BookType = bookReq.BookType;
+                            if (uploaded == 1)
+                            {
+                                book.ImagePath = bookReq.ImagePath;
+                                book.ImageFile = bookReq.ImageFile;
+                            }
 
                             book.Genres.Clear();
                             book.Genres = new List<Genre>();
@@ -168,14 +211,15 @@ namespace Serenity_Craft.Controllers
 
                             db.SaveChanges();
                         }
+
                         return RedirectToAction("Index");
                     }
 
-                    ViewBag.Message = "Deja exista o carte cu caracteristici asemanatoare!";
+                    ViewBag.Message = "The book is already in our database!";
                     return View(bookReq);
                 }
 
-                ViewBag.Message = "Una sau mai multe validari nu sunt respectate!";
+                ViewBag.Message = "Oh snap! Change a few things up and try submitting again.";
                 return View(bookReq);
             }
             catch (Exception)
@@ -187,6 +231,7 @@ namespace Serenity_Craft.Controllers
 
         // DELETE
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             Book book = db.Books.Find(id);
@@ -199,14 +244,16 @@ namespace Serenity_Craft.Controllers
                 return RedirectToAction("Index");
             }
 
-            return HttpNotFound("Cartea nu exista!");
+            return HttpNotFound("Couldn't find the book...");
         }
 
-        [NonAction] 
+        [NonAction]
         public IEnumerable<SelectListItem> GetAllBookTypes()
         {
             var selectList = new List<SelectListItem>();
-            foreach (var bt in db.BookTypes.ToList())
+            var bookTypes = db.BookTypes.OrderBy(bt => bt.Name);
+
+            foreach (var bt in bookTypes.ToList())
             {
                 selectList.Add(new SelectListItem
                 {
@@ -214,6 +261,7 @@ namespace Serenity_Craft.Controllers
                     Text = bt.Name
                 });
             }
+
             return selectList;
         }
 
@@ -221,8 +269,9 @@ namespace Serenity_Craft.Controllers
         public IEnumerable<SelectListItem> GetAllPublishers()
         {
             var selectList = new List<SelectListItem>();
+            var publishers = db.Publishers.OrderBy(p => p.Name);
 
-            foreach (var pub in db.Publishers.ToList())
+            foreach (var pub in publishers.ToList())
             {
                 selectList.Add(new SelectListItem
                 {
@@ -238,7 +287,9 @@ namespace Serenity_Craft.Controllers
         public List<CheckBoxModel> GetAllGenres()
         {
             var checkboxList = new List<CheckBoxModel>();
-            foreach (var genre in db.Genres.ToList())
+            var genres = db.Genres.OrderBy(g => g.Name);
+
+            foreach (var genre in genres.ToList())
             {
                 checkboxList.Add(new CheckBoxModel
                 {
@@ -247,6 +298,7 @@ namespace Serenity_Craft.Controllers
                     Checked = false
                 });
             }
+
             return checkboxList;
         }
 
@@ -261,5 +313,6 @@ namespace Serenity_Craft.Controllers
 
             return searchBook.BookId;
         }
+
     }
 }

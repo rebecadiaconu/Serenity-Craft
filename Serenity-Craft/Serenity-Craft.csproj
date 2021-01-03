@@ -191,6 +191,26 @@
     <Compile Include="Migrations\202012262145136_UpdateContactPublisher.Designer.cs">
       <DependentUpon>202012262145136_UpdateContactPublisher.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012281551020_UpdateReviewTable.cs" />
+    <Compile Include="Migrations\202012281551020_UpdateReviewTable.Designer.cs">
+      <DependentUpon>202012281551020_UpdateReviewTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012281617074_DropBookRatingProperty.cs" />
+    <Compile Include="Migrations\202012281617074_DropBookRatingProperty.Designer.cs">
+      <DependentUpon>202012281617074_DropBookRatingProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012290103305_AddedBooksImage.cs" />
+    <Compile Include="Migrations\202012290103305_AddedBooksImage.Designer.cs">
+      <DependentUpon>202012290103305_AddedBooksImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012292129384_AddedBookImageProperty.cs" />
+    <Compile Include="Migrations\202012292129384_AddedBookImageProperty.Designer.cs">
+      <DependentUpon>202012292129384_AddedBookImageProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012300831433_BookUpdate.cs" />
+    <Compile Include="Migrations\202012300831433_BookUpdate.Designer.cs">
+      <DependentUpon>202012300831433_BookUpdate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Book.cs" />
@@ -200,8 +220,10 @@
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MyValidations\EmailValidation.cs" />
+    <Compile Include="Models\MyValidations\PhoneNumberValidation.cs" />
     <Compile Include="Models\Publisher.cs" />
-    <Compile Include="Models\PublisherContactInfo.cs" />
+    <Compile Include="Models\ViewOneToOne\PublisherContactInfo.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -287,12 +309,13 @@
     <Content Include="Views\Contact\Delete.cshtml" />
     <Content Include="Views\Review\Index.cshtml" />
     <Content Include="Views\Review\New.cshtml" />
+    <Content Include="Views\Review\Edit.cshtml" />
+    <Content Include="Views\Review\Delete.cshtml" />
+    <Content Include="Views\Review\MyReviews.cshtml" />
+    <Content Include="Views\Review\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\MyValidations\" />
-    <Folder Include="Views\Address\" />
-    <Folder Include="Views\Delivery\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -316,6 +339,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012262145136_UpdateContactPublisher.resx">
       <DependentUpon>202012262145136_UpdateContactPublisher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012281551020_UpdateReviewTable.resx">
+      <DependentUpon>202012281551020_UpdateReviewTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012281617074_DropBookRatingProperty.resx">
+      <DependentUpon>202012281617074_DropBookRatingProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012290103305_AddedBooksImage.resx">
+      <DependentUpon>202012290103305_AddedBooksImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012292129384_AddedBookImageProperty.resx">
+      <DependentUpon>202012292129384_AddedBookImageProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012300831433_BookUpdate.resx">
+      <DependentUpon>202012300831433_BookUpdate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

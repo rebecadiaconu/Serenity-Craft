@@ -2,60 +2,88 @@
     ViewBag.Title = "Publishers";
 }
 
-<h2>@ViewBag.Title</h2>
-
+<br />
+<br />
 
 @if (ViewBag.Message != null)
 {
-    <div class="alert alert-danger ">
-        <p>Avem @ViewBag.Message carti ce sunt publicate de aceasta librarie.</p>
-        <p>Stergea ei implica si stergea tuturor acestor carti.</p>
-        <h3>Sunteti sigur de modificare?</h3>
+    <div class="alert alert-warning" style="text-align: center; position: relative">
+        <p>We have @ViewBag.Message book/books who has been published by this publisher.</p>
+        <p>Deleting this one will involve that all these books will be gone to.</p>
+        <h3>Are you sure you want to delete this publisher?</h3>
 
         @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
             new { id = ViewBag.PubId, delete = 1 }))
         {
             @Html.HttpMethodOverride(HttpVerbs.Delete)
-            <button class="btn btn-danger col-lg-1" type="submit">YES</button>
+            <button class="btn btn-danger " type="submit" style="position: absolute; left: 45%;">YES</button>
         }
 
         @using (Html.BeginForm(actionName: "Index", controllerName: "Publisher", method: FormMethod.Get, routeValues:
             new { id = (dynamic)null }))
         {
-            <button class="btn btn-primary col-lg-1" type="submit">NO</button>
+            <button class="btn btn-primary" type="submit" style="position: absolute; right: 45%;">NO</button>
         }
+        <br/>
+        <br/>
     </div>
 }
+<br />
+<br />
 
-@foreach (var pub in ViewBag.publishers)
-{
-    <ul class="panel-body">
-        <li>@pub.Name</li>
+<div style="position: relative;">
+    <h2>@ViewBag.Title  we collaborate with</h2>
 
-        @using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
-            routeValues: new { id = pub.PublisherId }))
+    @using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get))
+    {
+        <input style="height: 40px; width: 40px; position: absolute; right: 0; top: 0;"  type="image" src="~/Content/images/plus.png" />
+    }
+</div>
+
+<br />
+<br />
+<table class="table table-hover table-responsive" style="width: 100%">
+    <thead>
+        <tr>
+            <th scope="col" class="col-md-4"><h4>Name</h4></th>
+            <th scope="col" class="col-md-8"><h4>More</h4></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pub in ViewBag.publishers)
         {
-            <button class="btn btn-primary">Details</button>
+            <tr>
+                <th scope="row">@pub.Name</th>
+                <td>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
+                                routeValues: new { id = pub.PublisherId }))
+                            {
+                                <button class="btn btn-info">Details</button>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
+                                new {id = pub.PublisherId}))
+                            {
+                                <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
+                                new {id = pub.PublisherId}))
+                            {
+                                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            }
+                        </div>
+
+                    </div>
+                    <br/>
+                </td>
+            </tr>
         }
-
-        @using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
-            new { id = pub.PublisherId }))
-        {
-            <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Update</button>
-        }
-
-        @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
-            new { id = pub.PublisherId }))
-        {
-            @Html.HttpMethodOverride(HttpVerbs.Delete)
-            <button class="btn btn-danger col-lg-1" type="submit">Delete</button>
-        }
-        <br />
-    </ul>
-}
-
-@using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get))
-{
-    <button style="margin-right:5px" class="btn btn-primary col-lg-1" type="submit">Add new</button>
-}
-
+    </tbody>
+</table>
+<br />
