@@ -1,4 +1,9 @@
-﻿@{
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Serenity_Craft.Models.Book>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+@{
     ViewBag.Title = "Books";
 }
 
@@ -21,39 +26,37 @@
     <div class="row text-center">
         @using (Html.BeginForm(actionName: "Index", controllerName: "Book", method: FormMethod.Get))
         {
-            <div class="col-md-2">
-                <h4>
-                    FIND BY
-                </h4>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h5>
-                    <span style="font-weight: bold; color: #DB324D;">title</span>: @Html.TextBox("searchTitle", null)
+                    Sort by title:
+                    <small>
+                        @Html.ActionLink("A - Z", "Index", new { sortOrder = "", currentFilter1 = ViewBag.CurrentFilter1, currentFilter2 = ViewBag.CurrentFilter2 },
+                            new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" }) /
+                        @Html.ActionLink("Z - A", "Index", new { sortOrder = "title_desc", currentFilter1 = ViewBag.CurrentFilter1, currentFilter2 = ViewBag.CurrentFilter2 },
+                            new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" })
+                    </small>
                 </h5>
             </div>
             <div class="col-md-4">
                 <h5>
-                    <span style="font-weight: bold; color: #DB324D;">author</span>: @Html.TextBox("searchAuthor", null)
+                    Find by
+                    <span style="font-weight: bold; color: #DB324D;">title</span>: @Html.TextBox("searchTitle", ViewBag.Currentfilter1 as string)
+                </h5>
+            </div>
+            <div class="col-md-4">
+                <h5>
+                    <span style="font-weight: bold; color: #DB324D;">author</span>: @Html.TextBox("searchAuthor", ViewBag.CurrentFilter2 as string)
                 </h5>
             </div>
             <div class="col-md-1" style="padding-top: 7px;">
-                <input type="submit" value="Search" />
+                <input type="submit" value="SEARCH" />
             </div>
         }
     </div>
-    @*<div class="row">
-        <h5>
-            SORT by title:
-            <small>
-                @Html.ActionLink("A - Z", "Index", new {sortOrder = ""}, new {style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;"}) /
-                @Html.ActionLink("Z - A", "Index", new {sortOrder = "title_desc" }, new {style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;"})
-            </small>
-        </h5>
-    </div>*@
 }
 <br />
 
-@if (ViewBag.Books.Count == 0)
+@if (Model.Count == 0)
 {
     <div class="col-lg-12">
         <h2 style="text-align: center"><small>No books found.</small></h2>
@@ -62,7 +65,7 @@
 else
 {
     <div class="row" style="text-align: center;">
-        @foreach (var book in ViewBag.Books)
+        @foreach (var book in Model)
         {
             <div class="col-sm-6 col-md-4">
                 <div class="thumbnail">
@@ -141,6 +144,14 @@ else
             </div>
         }
     </div>
+
+    <br />
+    {
+        <p>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount</p>
+
+        @Html.PagedListPager(Model, page => Url.Action("Index",
+            new {page, sortOrder = ViewBag.CurrentSort, currentFilter1 = ViewBag.CurrentFilter1, currentFilter2 = ViewBag.CurrentFilter2}));
+    }
 }
 
 

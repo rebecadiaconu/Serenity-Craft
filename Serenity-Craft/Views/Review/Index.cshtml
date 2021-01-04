@@ -1,14 +1,18 @@
-﻿@{
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Serenity_Craft.Models.Review>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
     ViewBag.Title = "Reviews";
 }
 
-<br/>
+<br />
 <h2>@ViewBag.Title</h2>
-<br/>
+<br />
 
-@if (ViewBag.Reviews == null)
+@if (Model.Count == 0)
 {
-    <p>You haven't done any reviews yet!</p>
+    <p>No reviews yet!</p>
 }
 else
 {
@@ -17,60 +21,62 @@ else
         <div class="col-md-12">
             <h5>
                 Sort by:
-                @Html.ActionLink("A - Z", "Index", new { sortOrder = "" }, new { @style= "color: #D52941; font-weight: bold;" }) /
+                @Html.ActionLink("A - Z", "Index", new { sortOrder = "" }, new { @style = "color: #D52941; font-weight: bold;" }) /
                 @Html.ActionLink("Z - A", "Index", new { sortOrder = "name_desc" }, new { @style = "color: #D52941; font-weight: bold;" }) /
                 @Html.ActionLink("Review Date Asc.", "Index", new { sortOrder = "Date" }, new { @style = "color: #D52941; font-weight: bold;" }) /
-                @Html.ActionLink("Review Date Descen.", "Index", new { sortOrder = "date_desc" }, new { @style= "color: #D52941; font-weight: bold;" })
+                @Html.ActionLink("Review Date Descen.", "Index", new { sortOrder = "date_desc" }, new { @style = "color: #D52941; font-weight: bold;" })
             </h5>
         </div>
     </div>
-    <br/>
-    <br/>
+
+    <br />
+    <br />
     <table class="table table-hover table-responsive table-condense" style="width: 100%">
         <thead>
-        <tr>
-            <th scope="col" class="col-md-4"><h4>Book</h4></th>
-            <th scope="col" class="col-md-4"><h4>User</h4></th>
-            <th scope="col" class="col-md-4"><h4>More</h4></th>
-        </tr>
+            <tr>
+                <th scope="col" class="col-md-3"><h4>Book</h4></th>
+                <th scope="col" class="col-md-3"><h4>User</h4></th>
+                <th scope="col" class="col-md-3"><h4>Review Date</h4></th>
+                <th scope="col" class="col-md-3"><h4>More</h4></th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var review in ViewBag.Reviews)
-        {
-            <tr>
-                <th scope="row">@review.Book.Title - @review.Book.Author</th>
-                <th scope="row">@review.UserName</th>
-                <td>
-                    <div class="row">
-                        <div class="col-md-4">
-                            @using (Html.BeginForm(actionName: "Details", controllerName: "Review", method: FormMethod.Get, routeValues:
-                                new { id = review.ReviewId }))
-                            {
-                                <button style="margin-right: 5px" class="btn btn-info" type="submit">Details</button>
-                            }
-                        </div>
-                        @*<div class="col-md-4">
-                            @using (Html.BeginForm(actionName: "Edit", controllerName: "Review", method: FormMethod.Get, routeValues:
-                                new {id = review.ReviewId}))
-                            {
-                                <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
-                            }
-                        </div>*@
-                        <div class="col-md-4">
-                            @using (Html.BeginForm(actionName: "Delete", controllerName: "Review", method: FormMethod.Post, routeValues:
-                                new {id = review.ReviewId}))
-                            {
-                                @Html.HttpMethodOverride(HttpVerbs.Delete)
-                                <button class="btn btn-danger" type="submit">Delete</button>
-                            }
-                        </div>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <th scope="row">@review.Book.Title - @review.Book.Author</th>
+                    <th scope="row">@review.UserName</th>
+                    <th scope="row">@review.ReviewDate</th>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @using (Html.BeginForm(actionName: "Details", controllerName: "Review", method: FormMethod.Get, routeValues:
+                                    new { id = review.ReviewId }))
+                                {
+                                    <button style="margin-right: 5px" class="btn btn-info" type="submit">Details</button>
+                                }
+                            </div>
+                            <div class="col-md-4">
+                                @using (Html.BeginForm(actionName: "Delete", controllerName: "Review", method: FormMethod.Post, routeValues:
+                                    new { id = review.ReviewId }))
+                                {
+                                    @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                }
+                            </div>
 
-                    </div>
-                    <br />
-                </td>
-            </tr>
-        }
+                        </div>
+                        <br />
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
-    <br/>
+    <br />
+
+    {
+    <p>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount</p>
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new {page, sortOrder = ViewBag.CurrentSort}));
+    }
 }

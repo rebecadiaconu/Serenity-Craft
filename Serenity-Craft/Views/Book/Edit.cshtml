@@ -5,7 +5,7 @@
 
 <div style="padding-top: 30px; position: absolute; left: 150px;">
     <img src="/Content/images/back.png" />
-    @Html.ActionLink("Back to books list", "Index", "Book")
+    @Html.ActionLink("Back to book details", "Details", "Book", new {id = Model.BookId}, null)
 </div>
 
 <h2>@ViewBag.Title @Model.Title</h2>

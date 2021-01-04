@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using PagedList;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,22 +18,26 @@ namespace Serenity_Craft.Controllers
         // READ
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult Index(string searchTitle, string searchAuthor)
+        public ActionResult Index(string sortOrder, string currentFilter1, string currentFilter2, string searchTitle, string searchAuthor, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            if (searchAuthor != null || searchTitle != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchTitle = currentFilter1;
+                searchAuthor = currentFilter2;
+            }
+
+            ViewBag.CurrentFilter1 = searchTitle;
+            ViewBag.CurrentFilter2 = searchAuthor;
+
             var books = from s in db.Books
                                     select s;
-
-            //ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
-
-            //switch (sortOrder)
-            //{
-            //    case "title_desc":
-            //        books = books.OrderByDescending(s => s.Title);
-            //        break;
-            //    default:
-            //        books = books.OrderBy(s => s.Title);
-            //        break;
-            //}
 
             if (!String.IsNullOrEmpty(searchAuthor) && !String.IsNullOrEmpty(searchTitle))
             {
@@ -53,10 +58,20 @@ namespace Serenity_Craft.Controllers
                 }
             }
 
-            // var books = db.Books.Include("Publisher").Include("BookType").OrderBy(s => s.Title);
-            ViewBag.Books = books.ToList();
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    books = books.OrderByDescending(s => s.Title);
+                    break;
+                default:
+                    books = books.OrderBy(s => s.Title);
+                    break;
+            }
 
-            return View();
+            int pageSize = 6;
+            int pageNumber = (page ?? 1);
+
+            return View(books.ToPagedList(pageNumber, pageSize));
         }
 
         [HttpGet]
@@ -347,6 +362,5 @@ namespace Serenity_Craft.Controllers
 
             return searchBook.BookId;
         }
-
     }
 }

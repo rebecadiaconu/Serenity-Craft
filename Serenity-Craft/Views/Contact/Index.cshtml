@@ -1,4 +1,8 @@
-﻿@{
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Serenity_Craft.Models.Contact>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
     ViewBag.Title = "Publisher Contacts";
 }
 
@@ -7,25 +11,25 @@
 
 @if (ViewBag.Message != null)
 {
-<div class="alert alert-warning" style="text-align: center; position: relative">
-    <p>If you delete this contact, the publisher will be impossible get in tough with. </p>
-    <p>Would you like to edit the contact instead?</p>
-    <br/>
+    <div class="alert alert-warning" style="text-align: center; position: relative">
+        <p>If you delete this contact, the publisher will be impossible get in tough with. </p>
+        <p>Would you like to edit the contact instead?</p>
+        <br />
 
-    @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
-        new { id = ViewBag.Message }))
-    {
-        <button class="btn btn-danger " type="submit" style="position: absolute; left: 40%;">YES</button>
-    }
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+            new { id = ViewBag.Message }))
+        {
+            <button class="btn btn-danger " type="submit" style="position: absolute; left: 40%;">YES</button>
+        }
 
-    @using (Html.BeginForm(actionName: "Index", controllerName: "Contact", method: FormMethod.Get, routeValues:
-        new { id = (dynamic)null }))
-    {
-        <button class="btn btn-info" type="submit" style="position: absolute; right: 40%;">Don't delete</button>
-    }
-    <br />
-    <br />
-</div>
+        @using (Html.BeginForm(actionName: "Index", controllerName: "Contact", method: FormMethod.Get, routeValues:
+            new { id = (dynamic)null }))
+        {
+            <button class="btn btn-info" type="submit" style="position: absolute; right: 40%;">Don't delete</button>
+        }
+        <br />
+        <br />
+    </div>
 }
 <br />
 <br />
@@ -33,12 +37,23 @@
 <div style="position: relative;">
     <h2>@ViewBag.Title</h2>
 
-    @using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get, routeValues: new { id = 1 }))
+    @using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get, routeValues: new { id = 1}))
     {
         <input style="height: 40px; width: 40px; position: absolute; right: 0; top: 0;" type="image" src="~/Content/images/plus.png" />
     }
 </div>
 
+<div class="col-md-3">
+    <h5>
+        Sort by title:
+        <small>
+            @Html.ActionLink("A - Z", "Index", new { sortOrder = "" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" }) /
+            @Html.ActionLink("Z - A", "Index", new { sortOrder = "title_desc" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" })
+        </small>
+    </h5>
+</div>
 
 <br />
 <br />
@@ -52,35 +67,42 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var contact in ViewBag.contacts)
-    {
-        <tr>
-            <th scope="row">@contact.Publisher.Name</th>
-            <th scope="row">@contact.PhoneNumber</th>
-            <th scope="row">@contact.Email</th>
-            <td>
-                <div class="row">
-                    <div class="col-md-4">
-                        @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
-                            new { id = contact.PublisherId }))
-                        {
-                            <input style="height: 30px; width: 30px;"  type="image" src="~/Content/images/edit.png" />
-                        }
-                    </div>
-                    <div class="col-md-4">
-                        @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
-                            new { id = contact.PublisherId }))
-                        {
-                            @Html.HttpMethodOverride(HttpVerbs.Delete)
-                            <input style="height: 30px; width: 30px;" type="image" src="~/Content/images/remove.png" />
-                        }
-                    </div>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <th scope="row">@c.Publisher.Name</th>
+                <th scope="row">@c.PhoneNumber</th>
+                <th scope="row">@c.Email</th>
+                <td>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Edit", controllerName: "Contact", method: FormMethod.Get, routeValues:
+                                new { id = c.PublisherId }))
+                            {
+                                <input style="height: 30px; width: 30px;" type="image" src="~/Content/images/edit.png" />
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Delete", controllerName: "Contact", method: FormMethod.Post, routeValues:
+                                new { id = c.PublisherId }))
+                            {
+                                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                <input style="height: 30px; width: 30px;" type="image" src="~/Content/images/remove.png" />
+                            }
+                        </div>
 
-                </div>
-                <br />
-            </td>
-        </tr>
-    }
+                    </div>
+                    <br />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <br />
+
+@{
+    <p>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount</p>
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, sortOrder = ViewBag.CurrentSort }));
+}

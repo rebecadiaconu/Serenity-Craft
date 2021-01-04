@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
@@ -14,20 +15,36 @@ namespace Serenity_Craft.Controllers
 
         // READ
         [HttpGet]
-        public ActionResult Index(int? id)
+        public ActionResult Index(string sortOrder, int? id, int? page)
         {
             var contacts = db.Contacts.OrderBy(c=>c.Publisher.Name);
-            ViewBag.contacts = contacts.ToList();
+
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
 
             if (id.HasValue)
             {
                 ViewBag.Message = id;
-
-                return View();
+            }
+            else
+            {
+                ViewBag.Message = null;
             }
 
-            ViewBag.Message = null;
-            return View();
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    contacts = contacts.OrderByDescending(s => s.Publisher.Name);
+                    break;
+                default:
+                    contacts = contacts.OrderBy(s => s.Publisher.Name);
+                    break;
+            }
+
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
+
+            return View(contacts.ToPagedList(pageNumber, pageSize));
         }
 
         // UPDATE

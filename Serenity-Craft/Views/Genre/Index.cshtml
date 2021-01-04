@@ -1,4 +1,8 @@
-﻿@{
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Serenity_Craft.Models.Genre>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
     ViewBag.Title = "Genres";
 }
 
@@ -40,43 +44,62 @@
     }
 </div>
 
+<div class="col-md-3">
+    <h5>
+        Sort by title:
+        <small>
+            @Html.ActionLink("A - Z", "Index", new { sortOrder = "" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" }) /
+            @Html.ActionLink("Z - A", "Index", new { sortOrder = "title_desc" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" })
+        </small>
+    </h5>
+</div>
+
 <br />
 <br />
 <table class="table table-hover table-responsive table-condensed" style="width: 100%">
     <thead>
-    <tr>
-        <th scope="col" class="col-md-4"><h4>Name</h4></th>
-        <th scope="col" class="col-md-8"><h4>More</h4></th>
-    </tr>
+        <tr>
+            <th scope="col" class="col-md-4"><h4>Name</h4></th>
+            <th scope="col" class="col-md-8"><h4>More</h4></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var genre in ViewBag.Genres)
-    {
-        <tr>
-            <th scope="row">@genre.Name</th>
-            <td>
-                <div class="row">
-                    <div class="col-md-4">
-                        @using (Html.BeginForm(actionName: "Edit", controllerName: "Genre", method: FormMethod.Get, routeValues:
-                            new { id = genre.GenreId }))
-                        {
-                            <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
-                        }
-                    </div>
-                    <div class="col-md-4">
-                        @using (Html.BeginForm(actionName: "Delete", controllerName: "Genre", method: FormMethod.Post, routeValues:
-                            new { id = genre.GenreId }))
-                        {
-                            @Html.HttpMethodOverride(HttpVerbs.Delete)
-                            <button class="btn btn-danger" type="submit">Delete</button>
-                        }
-                    </div>
+        @foreach (var genre in Model)
+        {
+            <tr>
+                <th scope="row">@genre.Name</th>
+                <td>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Edit", controllerName: "Genre", method: FormMethod.Get, routeValues:
+                                new { id = genre.GenreId }))
+                            {
+                                <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            @using (Html.BeginForm(actionName: "Delete", controllerName: "Genre", method: FormMethod.Post, routeValues:
+                                new {id = genre.GenreId }))
+                            {
+                                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            }
+                        </div>
 
-                </div>
-                <br />
-            </td>
-        </tr>
-    }
+                    </div>
+                    <br />
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <br />
+
+@{
+    <p>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount</p>
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, sortOrder = ViewBag.CurrentSort }));
+}

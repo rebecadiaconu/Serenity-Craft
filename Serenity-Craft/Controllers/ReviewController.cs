@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using PagedList;
 using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
@@ -16,12 +17,13 @@ namespace Serenity_Craft.Controllers
 
         // READ
         [Authorize(Roles = "Admin")]
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, int? page)
         {
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-            var reviews = from r in db.Reviews
-                                        select r;
+
+            var reviews = db.Reviews.Include("Book").OrderBy(r => r.UserName);
+
             switch (sortOrder)
             {
                 case "name_desc":
@@ -38,10 +40,10 @@ namespace Serenity_Craft.Controllers
                     break;
             }
 
-            // var reviews =  db.Reviews.Include("Book").OrderBy(r => r.UserName);
-            ViewBag.Reviews = reviews.ToList();
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
 
-            return View();
+            return View(reviews.ToPagedList(pageNumber, pageSize));
         }
 
         [HttpGet]
@@ -207,7 +209,7 @@ namespace Serenity_Craft.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
-        public ActionResult MyReviews(string sortOrder)
+        public ActionResult MyReviews(string sortOrder, int? page)
         {
             var userId = User.Identity.GetUserId();
             ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
@@ -221,24 +223,22 @@ namespace Serenity_Craft.Controllers
             {
                 case "name_desc": 
                     reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderByDescending(s => s.Book.Title);
-                    ViewBag.Reviews = reviews.ToList();
                     break;
                 case "Date":
                     reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(s => s.ReviewDate);
-                    ViewBag.Reviews = reviews.ToList();
                     break;
                 case "date_desc":
                     reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderByDescending(s => s.ReviewDate);
-                    ViewBag.Reviews = reviews.ToList();
                     break;
                 default:
                     reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(s => s.Book.Title);
-                    ViewBag.Reviews = reviews.ToList();
                     break;
             }
 
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
 
-            return View();
+            return View(reviews.ToPagedList(pageNumber, pageSize));
         }
 
         [NonAction]

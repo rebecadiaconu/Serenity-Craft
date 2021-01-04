@@ -6,22 +6,17 @@
 <br />
 <br />
 
-@if (ViewBag.Message1 != null && ViewBag.Message2 != null)
-{
-    <div class="alert alert-danger" style="position: relative">
-        <p>@ViewBag.Message1</p>
-        <p>@ViewBag.Message2</p>
-
-        @using (Html.BeginForm(actionName: "Index", controllerName: "Publisher", method: FormMethod.Get))
-        {
-            <button style="margin: auto 0; position: absolute; right: 0; top: 0; bottom: 0" class="btn btn-primary col-lg-1" type="submit">Publisher List</button>
-        }
-    </div>
-}
-
 @if (ViewBag.Message != null)
 {
     <div class="alert alert-danger ">@ViewBag.Message</div>
+}
+
+@if (ViewBag.BackToContacts != null)
+{
+    <div style="padding-top: 30px; position: absolute; left: 150px; top: 150px">
+        <img src="/Content/images/back.png" />
+        @Html.ActionLink("Back to contacts list", "Index", "Contact")
+    </div> 
 }
 
 <div style="padding-top: 30px; position: absolute; left: 150px;">

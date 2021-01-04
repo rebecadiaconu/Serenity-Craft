@@ -3,7 +3,6 @@
     ViewBag.Title = "Edit review";
 }
 
-
 <br />
 <br />
 
@@ -12,15 +11,19 @@
     <div class="alert alert-danger ">@ViewBag.Message</div>
 }
 
-<div style="padding-top: 30px; position: absolute; left: 150px;">
+<div style="padding-top: 30px; position: absolute; left: 110px;">
     <img src="/Content/images/back.png" />
-    @if (User.IsInRole("Admin"))
-    {
-        @Html.ActionLink("Back to reviews list", "Index", "Review")
-    }
-    @if (User.IsInRole("User"))
+    @if (User.Identity.IsAuthenticated)
     {
         @Html.ActionLink("Back to my reviews", "MyReviews", "Review")
+    }
+</div>
+
+<div style="padding-top: 30px; position: absolute; left: 110px; top: 150px;">
+    <img src="/Content/images/back.png" />
+    @if (User.Identity.IsAuthenticated)
+    {
+        @Html.ActionLink("Back to book details", "Details", "Book", new {id = Model.BookId}, null)
     }
 </div>
 

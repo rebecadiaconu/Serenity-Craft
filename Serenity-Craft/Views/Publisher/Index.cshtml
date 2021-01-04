@@ -1,4 +1,8 @@
-﻿@{
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Serenity_Craft.Models.Publisher>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
     ViewBag.Title = "Publishers";
 }
 
@@ -24,8 +28,8 @@
         {
             <button class="btn btn-primary" type="submit" style="position: absolute; right: 45%;">NO</button>
         }
-        <br/>
-        <br/>
+        <br />
+        <br />
     </div>
 }
 <br />
@@ -36,8 +40,20 @@
 
     @using (Html.BeginForm(actionName: "New", controllerName: "Publisher", method: FormMethod.Get))
     {
-        <input style="height: 40px; width: 40px; position: absolute; right: 0; top: 0;"  type="image" src="~/Content/images/plus.png" />
+        <input style="height: 40px; width: 40px; position: absolute; right: 0; top: 0;" type="image" src="~/Content/images/plus.png" />
     }
+</div>
+
+<div class="col-md-3">
+    <h5>
+        Sort by title:
+        <small>
+            @Html.ActionLink("A - Z", "Index", new { sortOrder = "" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" }) /
+            @Html.ActionLink("Z - A", "Index", new { sortOrder = "title_desc" },
+                new { style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;" })
+        </small>
+    </h5>
 </div>
 
 <br />
@@ -50,7 +66,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var pub in ViewBag.publishers)
+        @foreach (var pub in Model)
         {
             <tr>
                 <th scope="row">@pub.Name</th>
@@ -58,21 +74,21 @@
                     <div class="row">
                         <div class="col-md-4">
                             @using (Html.BeginForm(actionName: "Details", controllerName: "Publisher", method: FormMethod.Get,
-                                routeValues: new { id = pub.PublisherId }))
+                                routeValues: new { id = pub.PublisherId, book = (dynamic)null }))
                             {
                                 <button class="btn btn-info">Details</button>
                             }
                         </div>
                         <div class="col-md-4">
                             @using (Html.BeginForm(actionName: "Edit", controllerName: "Publisher", method: FormMethod.Get, routeValues:
-                                new {id = pub.PublisherId}))
+                                new { id = pub.PublisherId }))
                             {
                                 <button style="margin-right: 5px" class="btn btn-primary" type="submit">Update</button>
                             }
                         </div>
                         <div class="col-md-4">
                             @using (Html.BeginForm(actionName: "Delete", controllerName: "Publisher", method: FormMethod.Post, routeValues:
-                                new {id = pub.PublisherId}))
+                                new { id = pub.PublisherId }))
                             {
                                 @Html.HttpMethodOverride(HttpVerbs.Delete)
                                 <button class="btn btn-danger" type="submit">Delete</button>
@@ -80,10 +96,17 @@
                         </div>
 
                     </div>
-                    <br/>
+                    <br />
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <br />
+
+@{
+    <p>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount</p>
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, sortOrder = ViewBag.CurrentSort }));
+}

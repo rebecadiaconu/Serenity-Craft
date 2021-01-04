@@ -92,7 +92,7 @@
         {
             <div class="row">
                 <h4 class="col-xs-6">Publisher: <small>@Model.Publisher.Name</small></h4>
-                @Html.ActionLink("Contact Info", "Details", "Publisher", new { id = Model.PublisherId }, new { @class = "col-xs-6 btn" })
+                @Html.ActionLink("Contact Info", "Details", "Publisher", new { id = Model.PublisherId, book = Model.BookId }, new { @class = "col-xs-6 btn" })
             </div>
         }
         <h4>Number of pages: <small>@Model.Pages</small></h4>

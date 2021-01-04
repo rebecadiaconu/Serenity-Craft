@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Linq;
 using System.Web;
+using PagedList;
 using System.Web.Mvc;
 using Serenity_Craft.Models;
 
@@ -16,31 +17,51 @@ namespace Serenity_Craft.Controllers
         // READ
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult Index(int? id)
+        public ActionResult Index(string sortOrder, int? id, int? page)
         {
             var publishers = db.Publishers.Include("Contact").OrderBy(p =>p.Name);
-            ViewBag.publishers = publishers.ToList();
+
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
 
             if (id.HasValue)
             {
                 ViewBag.Message = AllBooks((int)id).ToString();
                 ViewBag.PubId = id;
-
-                return View();
+            }
+            else
+            {
+                ViewBag.Message = null;
             }
 
-            ViewBag.Message = null;
-            return View();
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    publishers = publishers.OrderByDescending(s => s.Name);
+                    break;
+                default:
+                    publishers = publishers.OrderBy(s => s.Name);
+                    break;
+            }
+
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
+
+            return View(publishers.ToPagedList(pageNumber, pageSize));
         }
 
         [HttpGet]
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int? book)
         {
             if (id.HasValue)
             {
                 Publisher pub = db.Publishers.Find(id);
                 if (pub != null)
                 {
+                    if (book.HasValue)
+                    {
+                        ViewBag.Bookid = book;
+                    }
                     return View(pub);
                 }
 
@@ -53,9 +74,18 @@ namespace Serenity_Craft.Controllers
         // CREATE
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult New()
+        public ActionResult New(int? id)
         {
             PublisherContactInfo pub = new PublisherContactInfo();
+
+            if (id.HasValue)
+            {
+                ViewBag.BackToContacts = id;
+            }
+            else
+            {
+                ViewBag.BackToContacts = null;
+            }
 
             ViewBag.Message = null;
             return View(pub);
