@@ -14,7 +14,14 @@
 
 <div style="padding-top: 30px; position: absolute; left: 150px;">
     <img src="/Content/images/back.png" />
-    @Html.ActionLink("Back to reviews list", "Index", "Review")
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Back to reviews list", "Index", "Review")
+    }
+    @if (User.IsInRole("User"))
+    {
+        @Html.ActionLink("Back to my reviews", "MyReviews", "Review")
+    }
 </div>
 
 <br />

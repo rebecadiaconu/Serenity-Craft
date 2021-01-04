@@ -5,96 +5,142 @@
 <h2>
     @ViewBag.Title
 </h2>
+<hr />
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
     using (Html.BeginForm(actionName: "New", controllerName: "Book", method: FormMethod.Get))
     {
-        <input style="height: 40px; width: 40px; position: absolute; right: 20%; top: 70px;"  type="image" src="~/Content/images/plus.png" />
+        <input style="height: 40px; width: 40px; position: absolute; right: 20%; top: 70px;" type="image" src="~/Content/images/plus.png" />
     }
 }
 
 <br />
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row text-center">
+        @using (Html.BeginForm(actionName: "Index", controllerName: "Book", method: FormMethod.Get))
+        {
+            <div class="col-md-2">
+                <h4>
+                    FIND BY
+                </h4>
+            </div>
+            <div class="col-md-4">
+                <h5>
+                    <span style="font-weight: bold; color: #DB324D;">title</span>: @Html.TextBox("searchTitle", null)
+                </h5>
+            </div>
+            <div class="col-md-4">
+                <h5>
+                    <span style="font-weight: bold; color: #DB324D;">author</span>: @Html.TextBox("searchAuthor", null)
+                </h5>
+            </div>
+            <div class="col-md-1" style="padding-top: 7px;">
+                <input type="submit" value="Search" />
+            </div>
+        }
+    </div>
+    @*<div class="row">
+        <h5>
+            SORT by title:
+            <small>
+                @Html.ActionLink("A - Z", "Index", new {sortOrder = ""}, new {style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;"}) /
+                @Html.ActionLink("Z - A", "Index", new {sortOrder = "title_desc" }, new {style = "color: #DB324D; font-size: 1.5rem; font-weight: bold;"})
+            </small>
+        </h5>
+    </div>*@
+}
+<br />
 
-<div class="row" style="text-align: center;">
-    @foreach (var book in ViewBag.Books)
-    {
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <img class="book-img" src="@book.ImagePath" alt="book's image" style="height: 400px">
-                <div class="caption">
-                    @{
-                        double rating = 0;
+@if (ViewBag.Books.Count == 0)
+{
+    <div class="col-lg-12">
+        <h2 style="text-align: center"><small>No books found.</small></h2>
+    </div>
+}
+else
+{
+    <div class="row" style="text-align: center;">
+        @foreach (var book in ViewBag.Books)
+        {
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img class="book-img" src="@book.ImagePath" alt="book's image" style="height: 400px">
+                    <div class="caption">
+                        @{
+                            double rating = 0;
 
-                        if (book.Reviews.Count != 0)
-                        {
-                            int sum = 0;
-
-                            foreach (var review in book.Reviews)
+                            if (book.Reviews.Count != 0)
                             {
-                                sum += review.Note;
+                                int sum = 0;
+
+                                foreach (var review in book.Reviews)
+                                {
+                                    sum += review.Note;
+                                }
+
+                                rating = sum / book.Reviews.Count;
                             }
 
-                            rating = sum / book.Reviews.Count;
+                            switch (rating)
+                            {
+                                case 0:
+                                    <text>
+                                        <p>☆☆☆☆☆ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                                case 1:
+                                    <text>
+                                        <p>⭐☆☆☆☆ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                                case 2:
+                                    <text>
+                                        <p>⭐⭐☆☆☆ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                                case 3:
+                                    <text>
+                                        <p>⭐⭐⭐☆☆ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                                case 4:
+                                    <text>
+                                        <p>⭐⭐⭐⭐☆ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                                case 5:
+                                    <text>
+                                        <p>⭐⭐⭐⭐⭐ (@book.Reviews.Count)</p>
+                                    </text>
+                                    break;
+                            }
                         }
+                        <h3>@book.Title</h3>
+                        <h3><small>@book.Author</small></h3>
 
-                        switch (rating)
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            case 0:
-                                <text>
-                                    <p>☆☆☆☆☆ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
-                            case 1:
-                                <text>
-                                    <p>⭐☆☆☆☆ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
-                            case 2:
-                                <text>
-                                    <p>⭐⭐☆☆☆ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
-                            case 3:
-                                <text>
-                                    <p>⭐⭐⭐☆☆ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
-                            case 4:
-                                <text>
-                                    <p>⭐⭐⭐⭐☆ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
-                            case 5:
-                                <text>
-                                    <p>⭐⭐⭐⭐⭐ (@book.Reviews.Count)</p>
-                                </text>
-                                break;
+                            using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
+                                routeValues: new { id = book.BookId }))
+                            {
+                                <button class="btn btn-primary">Details</button>
+                            }
                         }
-                    }
-                    <h3>@book.Title</h3>
-                    <h3><small>@book.Author</small></h3>
-
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        using (Html.BeginForm(actionName: "Details", controllerName: "Book", method: FormMethod.Get,
-                            routeValues: new { id = book.BookId }))
+                        else
                         {
-                            <button class="btn btn-primary">Details</button>
+                            using (Html.BeginForm(actionName: "Login", controllerName: "Account", method: FormMethod.Get,
+                                routeValues: new { id = book.BookId }))
+                            {
+                                <button class="btn btn-info">Details</button>
+                            }
                         }
-                    }
-                    else
-                    {
-                        using (Html.BeginForm(actionName: "Login", controllerName: "Account", method: FormMethod.Get,
-                            routeValues: new { id = book.BookId }))
-                        {
-                            <button class="btn btn-info">Details</button>
-                        }
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
 
 

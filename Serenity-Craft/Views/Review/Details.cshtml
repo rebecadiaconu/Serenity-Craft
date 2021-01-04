@@ -12,6 +12,10 @@
     {
         @Html.ActionLink("Back to reviews list", "Index", "Review")
     }
+    @if (User.IsInRole("User"))
+    {
+        @Html.ActionLink("Back to books list", "Index", "Book")
+    }
 </div>
 
 <br/>

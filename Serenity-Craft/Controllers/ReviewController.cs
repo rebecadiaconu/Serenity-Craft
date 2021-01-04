@@ -16,9 +16,29 @@ namespace Serenity_Craft.Controllers
 
         // READ
         [Authorize(Roles = "Admin")]
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            var reviews =  db.Reviews.Include("Book").OrderBy(r => r.UserName);
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            var reviews = from r in db.Reviews
+                                        select r;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    reviews = reviews.OrderByDescending(s => s.UserName);
+                    break;
+                case "Date":
+                    reviews = reviews.OrderBy(s => s.ReviewDate);
+                    break;
+                case "date_desc":
+                    reviews = reviews.OrderByDescending(s => s.ReviewDate);
+                    break;
+                default:
+                    reviews = reviews.OrderBy(s => s.UserName);
+                    break;
+            }
+
+            // var reviews =  db.Reviews.Include("Book").OrderBy(r => r.UserName);
             ViewBag.Reviews = reviews.ToList();
 
             return View();
@@ -54,6 +74,7 @@ namespace Serenity_Craft.Controllers
                 {
                     Review review = new Review();
                     ViewBag.Notes = GetAllNotes();
+                    ViewBag.Book = id;
                     ViewBag.Message = null;
 
                     return View(review);
@@ -186,14 +207,36 @@ namespace Serenity_Craft.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
-        public ActionResult MyReviews()
+        public ActionResult MyReviews(string sortOrder)
         {
             var userId = User.Identity.GetUserId();
             ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
 
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
             var reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(r => r.Book.Title);
 
-            ViewBag.Reviews = reviews.ToList();
+            switch (sortOrder)
+            {
+                case "name_desc": 
+                    reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderByDescending(s => s.Book.Title);
+                    ViewBag.Reviews = reviews.ToList();
+                    break;
+                case "Date":
+                    reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(s => s.ReviewDate);
+                    ViewBag.Reviews = reviews.ToList();
+                    break;
+                case "date_desc":
+                    reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderByDescending(s => s.ReviewDate);
+                    ViewBag.Reviews = reviews.ToList();
+                    break;
+                default:
+                    reviews = db.Reviews.Include("Book").Where(r => r.UserName.Equals(user.Email)).OrderBy(s => s.Book.Title);
+                    ViewBag.Reviews = reviews.ToList();
+                    break;
+            }
+
 
             return View();
         }

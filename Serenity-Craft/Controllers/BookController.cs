@@ -17,9 +17,43 @@ namespace Serenity_Craft.Controllers
         // READ
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult Index()
+        public ActionResult Index(string searchTitle, string searchAuthor)
         {
-           var books = db.Books.Include("Publisher").Include("BookType").OrderBy(s => s.Title); ;
+            var books = from s in db.Books
+                                    select s;
+
+            //ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            //switch (sortOrder)
+            //{
+            //    case "title_desc":
+            //        books = books.OrderByDescending(s => s.Title);
+            //        break;
+            //    default:
+            //        books = books.OrderBy(s => s.Title);
+            //        break;
+            //}
+
+            if (!String.IsNullOrEmpty(searchAuthor) && !String.IsNullOrEmpty(searchTitle))
+            {
+                books = books.Where(s => s.Title.ToLower().Contains(searchTitle.ToLower()) &&
+                                         s.Author.ToLower().Contains(searchAuthor.ToLower()));
+
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(searchTitle))
+                {
+                    books = books.Where(s => s.Title.ToLower().Contains(searchTitle.ToLower()));
+                }
+                else if (!String.IsNullOrEmpty(searchAuthor))
+                {
+                    books = books.Where(s => s.Author.ToLower().Contains(searchAuthor.ToLower()));
+
+                }
+            }
+
+            // var books = db.Books.Include("Publisher").Include("BookType").OrderBy(s => s.Title);
             ViewBag.Books = books.ToList();
 
             return View();

@@ -5,10 +5,21 @@
 
 <br />
 
-<div style="padding-top: 30px; position: absolute; left: 150px;">
-    <img src="/Content/images/back.png" />
-    @Html.ActionLink("Back to publishers list", "Index", "Publisher")
-</div>
+@if (User.IsInRole("User"))
+{
+    <div style="padding-top: 30px; position: absolute; left: 150px;">
+        <img src="/Content/images/back.png" />
+        @Html.ActionLink("Back to books list", "Index", "Book")
+    </div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div style="padding-top: 30px; position: absolute; left: 150px;">
+        <img src="/Content/images/back.png" />
+        @Html.ActionLink("Back to publishers list", "Index", "Publisher")
+    </div>
+}
 
 <br />
 

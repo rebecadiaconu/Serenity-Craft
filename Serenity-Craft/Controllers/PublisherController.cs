@@ -8,13 +8,14 @@ using Serenity_Craft.Models;
 
 namespace Serenity_Craft.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class PublisherController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // READ
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Index(int? id)
         {
             var publishers = db.Publishers.Include("Contact").OrderBy(p =>p.Name);
@@ -51,6 +52,7 @@ namespace Serenity_Craft.Controllers
 
         // CREATE
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult New()
         {
             PublisherContactInfo pub = new PublisherContactInfo();
@@ -103,6 +105,7 @@ namespace Serenity_Craft.Controllers
 
         // UPDATE
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id.HasValue)
@@ -125,14 +128,6 @@ namespace Serenity_Craft.Controllers
         {
             try
             {
-                //Contact contact = new Contact
-                //{
-                //    PublisherId = id,
-                //    PhoneNumber = pubReq.Contact.PhoneNumber,
-                //    Email = pubReq.Contact.em
-                //};
-                //pubReq.Contact.PublisherId = id;
-
                 if (ModelState.IsValid)
                 {
                     if (NotExists(pubReq.Name) == -1 || NotExists(pubReq.Name) == id)
@@ -171,6 +166,7 @@ namespace Serenity_Craft.Controllers
 
         // DELETE
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, int? delete)
         {
             Publisher publisher = db.Publishers.Find(id);

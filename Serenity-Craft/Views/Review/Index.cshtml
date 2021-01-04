@@ -13,6 +13,17 @@
 else
 {
 
+    <div class="row">
+        <div class="col-md-12">
+            <h5>
+                Sort by:
+                @Html.ActionLink("A - Z", "Index", new { sortOrder = "" }, new { @style= "color: #D52941; font-weight: bold;" }) /
+                @Html.ActionLink("Z - A", "Index", new { sortOrder = "name_desc" }, new { @style = "color: #D52941; font-weight: bold;" }) /
+                @Html.ActionLink("Review Date Asc.", "Index", new { sortOrder = "Date" }, new { @style = "color: #D52941; font-weight: bold;" }) /
+                @Html.ActionLink("Review Date Descen.", "Index", new { sortOrder = "date_desc" }, new { @style= "color: #D52941; font-weight: bold;" })
+            </h5>
+        </div>
+    </div>
     <br/>
     <br/>
     <table class="table table-hover table-responsive table-condense" style="width: 100%">
